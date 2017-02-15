@@ -1,0 +1,83 @@
+/*******************************************************************************
+ * Project:  Beacon
+ * @file     CmdNodeReport.cpp
+ * @brief 
+ * @author   bwar
+ * @date:    Feb 14, 2017
+ * @note
+ * Modify history:
+ ******************************************************************************/
+#include "CmdNodeReport.hpp"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+    neb::Cmd* create()
+    {
+        neb::Cmd* pCmd = new beacon::CmdNodeReport();
+        return(pCmd);
+    }
+#ifdef __cplusplus
+}
+#endif
+
+namespace beacon
+{
+
+CmdNodeReport::CmdNodeReport()
+    : m_pSessionNode(NULL)
+{
+}
+
+CmdNodeReport::~CmdNodeReport()
+{
+}
+
+bool CmdNodeReport::Init()
+{
+    return(true);
+}
+
+bool CmdNodeReport::AnyMessage(const neb::tagChannelContext& stCtx,
+                const MsgHead& oMsgHead,
+                const MsgBody& oMsgBody)
+{
+    MsgHead oOutMsgHead;
+    MsgBody oOutMsgBody;
+    neb::CJsonObject oNodeInfo;
+    tagNodeInfo stNodeInfo;
+    if (NULL == m_pSessionNode)
+    {
+        m_pSessionNode = (SessionNode*)GetSession(1, "beacon::SessionNode");
+        if (NULL == m_pSessionNode)
+        {
+            LOG4_ERROR("no session node found!");
+        }
+    }
+    if (oNodeInfo.Parse(oMsgBody.data()))
+    {
+        uint16 unNodeId = m_pSessionNode->AddNode(oNodeInfo);
+        if (0 == unNodeId)
+        {
+            oOutMsgBody.mutable_rsp_result()->set_code(neb::ERR_NODE_NUM);
+            oOutMsgBody.mutable_rsp_result()->set_msg("there is no valid node_id in the system!");
+        }
+        else
+        {
+            neb::CJsonObject oNodeId;
+            oNodeId.Add("node_id", unNodeId);
+            oOutMsgBody.set_data(oNodeId.ToString());
+            oOutMsgBody.mutable_rsp_result()->set_code(neb::ERR_OK);
+            oOutMsgBody.mutable_rsp_result()->set_msg("OK");
+        }
+    }
+    else
+    {
+        LOG4_ERROR("failed to parse node info json from MsgBody.data()!");
+        oOutMsgBody.mutable_rsp_result()->set_code(neb::ERR_BODY_JSON);
+        oOutMsgBody.mutable_rsp_result()->set_msg("failed to parse node info json from MsgBody.data()!");
+    }
+    return(SendTo(stCtx, oMsgHead.cmd() + 1, oMsgHead.seq(), oOutMsgBody));
+}
+
+} /* namespace beacon */

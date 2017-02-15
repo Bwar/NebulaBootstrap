@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Project:  Beacon
- * @file     CmdRegister.hpp
- * @brief    节点注册
+ * @file     CmdNodeReport.hpp
+ * @brief 
  * @author   bwar
- * @date:    Sep 19, 2016
+ * @date:    Feb 14, 2017
  * @note
  * Modify history:
  ******************************************************************************/
-#ifndef SRC_CMDREGISTER_CMDNODEREGISTER_HPP_
-#define SRC_CMDREGISTER_CMDNODEREGISTER_HPP_
+#ifndef SRC_CMDNODEREPORT_CMDNODEREPORT_HPP_
+#define SRC_CMDNODEREPORT_CMDNODEREPORT_HPP_
 
 #include <Error.hpp>
 #include <util/json/CJsonObject.hpp>
@@ -26,11 +26,11 @@ extern "C" {
 namespace beacon
 {
 
-class CmdNodeRegister: public neb::Cmd
+class CmdNodeReport: public neb::Cmd
 {
 public:
-    CmdNodeRegister();
-    virtual ~CmdNodeRegister();
+    CmdNodeReport();
+    virtual ~CmdNodeReport();
 
     virtual bool Init();
     virtual bool AnyMessage(
@@ -40,12 +40,8 @@ public:
 
     virtual std::string ObjectName() const
     {
-        return("beacon::CmdNodeRegister");
+        return("beacon::CmdNodeReport");
     }
-
-protected:
-    bool InitFromDb(const neb::CJsonObject& oDbConf);
-    bool InitFromLocal(const neb::CJsonObject& oLocalConf);
 
 private:
     SessionNode* m_pSessionNode;
@@ -53,4 +49,4 @@ private:
 
 } /* namespace beacon */
 
-#endif /* SRC_CMDREGISTER_CMDNODEREGISTER_HPP_ */
+#endif /* SRC_CMDNODEREPORT_CMDNODEREPORT_HPP_ */
