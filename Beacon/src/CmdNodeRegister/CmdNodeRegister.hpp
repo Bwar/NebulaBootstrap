@@ -7,8 +7,8 @@
  * @note
  * Modify history:
  ******************************************************************************/
-#ifndef SRC_CMDREGISTER_CMDNODEREGISTER_HPP_
-#define SRC_CMDREGISTER_CMDNODEREGISTER_HPP_
+#ifndef SRC_CMDNODEREGISTER_CMDNODEREGISTER_HPP_
+#define SRC_CMDNODEREGISTER_CMDNODEREGISTER_HPP_
 
 #include <Error.hpp>
 #include <util/json/CJsonObject.hpp>
@@ -53,4 +53,4 @@ private:
 
 } /* namespace beacon */
 
-#endif /* SRC_CMDREGISTER_CMDNODEREGISTER_HPP_ */
+#endif /* SRC_CMDNODEREGISTER_CMDNODEREGISTER_HPP_ */

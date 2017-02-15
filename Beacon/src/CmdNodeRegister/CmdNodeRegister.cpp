@@ -8,7 +8,7 @@
  * Modify history:
  ******************************************************************************/
 
-#include "CmdNodeRegister.hpp"
+#include <CmdNodeRegister/CmdNodeRegister.hpp>
 
 #ifdef __cplusplus
 extern "C"
