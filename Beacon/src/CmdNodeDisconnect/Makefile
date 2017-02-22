@@ -14,6 +14,8 @@ SYSTEM_LIB_PATH:=/usr/lib
 endif
 LIB3RD_PATH = /home/bwar/factory/cplus/NebulaDepend
 NEBULA_PATH = /home/bwar/factory/cplus/Nebula
+PROTO_PATH = ../../../proto
+PLUGIN_PATH = ../..
 
 VPATH = . ..
 SUB_DIRS := $(VPATH)

@@ -16,6 +16,7 @@
 #include <map>
 #include <util/json/CJsonObject.hpp>
 #include <object/session/Session.hpp>
+#include "StepNodeBroadcast.hpp"
 
 namespace beacon
 {

@@ -22,6 +22,11 @@ SessionNode::~SessionNode()
 {
 }
 
+neb::E_CMD_STATUS SessionNode::Timeout()
+{
+    return(neb::CMD_STATUS_RUNNING);
+}
+
 void SessionNode::AddIpwhite(const std::string& strIpwhite)
 {
     m_setIpwhite.insert(strIpwhite);
@@ -78,7 +83,7 @@ uint16 SessionNode::AddNode(const neb::CJsonObject& oNodeInfo)
     oNodeInfoWithNodeId.Replace("node_id", uiNodeId);
 
 
-    std::map<std::string, std::map<std::string, tagNodeInfo> >::iterator node_type_iter = m_mapNode.find(oNodeInfo("node_type"));
+    std::map<std::string, std::map<std::string, neb::CJsonObject> >::iterator node_type_iter = m_mapNode.find(oNodeInfo("node_type"));
     if (node_type_iter == m_mapNode.end())
     {
         std::map<std::string, neb::CJsonObject> mapNodeInfo;
