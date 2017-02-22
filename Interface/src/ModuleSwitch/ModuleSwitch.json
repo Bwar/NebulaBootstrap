@@ -1,0 +1,26 @@
+{
+	"module":[
+		{
+			"node_type":["DEMO"],
+			"url_path":"/im/hello_switch",
+			"cmd":62001,
+			"guid2imid":{"guid_key_in":"", "guid_key":"", "imid_as_session_id":false},
+			"additional":false,
+			"session_id":{"position":"header", "key_in":"cookie", "key":"imid"}
+		},
+		{
+			"node_type":["OSSI","INTERFACE"],
+			"url_path":"/im/community/write_blog",
+			"cmd":6005,
+			"additional":true,
+			"session_id":{"position":"header", "key_in":"cookie", "key":"imid"}
+		},
+		{
+			"node_type":["OSSI","INTERFACE"],
+			"url_path":"/im/community/comment",
+			"cmd":6009,
+			"additional":true,
+			"session_id":{"position":"header", "key_in":"cookie", "key":"imid"}
+		}
+	]
+}
