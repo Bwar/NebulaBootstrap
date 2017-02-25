@@ -23,8 +23,7 @@ StepNodeBroadcast::~StepNodeBroadcast()
 
 neb::E_CMD_STATUS StepNodeBroadcast::Emit(int iErrno, const std::string& strErrMsg, void* data)
 {
-    // Step::SendTo(m_stCtx, m_uiCmd, GetSequence(), m_oMsgBody);
-    if (SendTo(m_stCtx, m_uiCmd, GetSequence(), m_oMsgBody))
+    if (SendTo(m_strTargetNodeIdentity, m_uiCmd, GetSequence(), m_oMsgBody))
     {
         return(neb::CMD_STATUS_RUNNING);
     }

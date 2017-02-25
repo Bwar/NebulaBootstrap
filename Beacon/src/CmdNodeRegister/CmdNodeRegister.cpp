@@ -118,6 +118,7 @@ bool CmdNodeRegister::AnyMessage(
     MsgBody oOutMsgBody;
     neb::CJsonObject oNodeInfo;
     tagNodeInfo stNodeInfo;
+    SendTo(stCtx, oMsgHead.cmd() + 1, oMsgHead.seq(), oOutMsgBody);
     if (oNodeInfo.Parse(oMsgBody.data()))
     {
         /*
@@ -145,6 +146,7 @@ bool CmdNodeRegister::AnyMessage(
         {
             oOutMsgBody.mutable_rsp_result()->set_code(neb::ERR_NODE_NUM);
             oOutMsgBody.mutable_rsp_result()->set_msg("there is no valid node_id in the system!");
+            return(false);
         }
         else
         {
@@ -153,6 +155,7 @@ bool CmdNodeRegister::AnyMessage(
             oOutMsgBody.set_data(oNodeId.ToString());
             oOutMsgBody.mutable_rsp_result()->set_code(neb::ERR_OK);
             oOutMsgBody.mutable_rsp_result()->set_msg("OK");
+            return(true);
         }
     }
     else
@@ -160,8 +163,8 @@ bool CmdNodeRegister::AnyMessage(
         LOG4_ERROR("failed to parse node info json from MsgBody.data()!");
         oOutMsgBody.mutable_rsp_result()->set_code(neb::ERR_BODY_JSON);
         oOutMsgBody.mutable_rsp_result()->set_msg("failed to parse node info json from MsgBody.data()!");
+        return(false);
     }
-    return(SendTo(stCtx, oMsgHead.cmd() + 1, oMsgHead.seq(), oOutMsgBody));
 }
 
 } /* namespace beacon */
