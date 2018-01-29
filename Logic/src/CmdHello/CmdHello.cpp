@@ -43,7 +43,7 @@ bool CmdHello::AnyMessage(
                 const MsgHead& oMsgHead, const MsgBody& oMsgBody)
 {
     MsgBody oOutMsgBody;
-    oOutMsgBody.set_data("Nebula: hello!");
+    oOutMsgBody.set_data("Nebula: hello!\n");
     SendTo(stCtx, oMsgHead.cmd() + 1, oMsgHead.seq(), oOutMsgBody);
     return(true);
 }
