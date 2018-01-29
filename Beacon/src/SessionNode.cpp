@@ -211,6 +211,7 @@ void SessionNode::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
                     }
                 }
             }
+
         }
     }
 
