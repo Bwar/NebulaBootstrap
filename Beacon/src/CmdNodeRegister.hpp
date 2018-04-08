@@ -7,29 +7,21 @@
  * @note
  * Modify history:
  ******************************************************************************/
-#ifndef SRC_CMDNODEREGISTER_CMDNODEREGISTER_HPP_
-#define SRC_CMDNODEREGISTER_CMDNODEREGISTER_HPP_
+#ifndef SRC_CMDNODEREGISTER_HPP_
+#define SRC_CMDNODEREGISTER_HPP_
 
+#include <actor/cmd/Cmd.hpp>
 #include <Error.hpp>
 #include <util/json/CJsonObject.hpp>
-#include <object/cmd/Cmd.hpp>
 #include "SessionNode.hpp"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-    neb::Cmd* create();
-#ifdef __cplusplus
-}
-#endif
 
 namespace beacon
 {
 
-class CmdNodeRegister: public neb::Cmd
+class CmdNodeRegister: public neb::Cmd, public neb::DynamicCreator<CmdNodeRegister, int32>
 {
 public:
-    CmdNodeRegister();
+    CmdNodeRegister(int32 iCmd);
     virtual ~CmdNodeRegister();
 
     virtual bool Init();
@@ -37,12 +29,6 @@ public:
                     const neb::tagChannelContext& stCtx,
                     const MsgHead& oMsgHead,
                     const MsgBody& oMsgBody);
-
-    virtual std::string ObjectName() const
-    {
-        return("beacon::CmdNodeRegister");
-    }
-
 protected:
     bool InitFromDb(const neb::CJsonObject& oDbConf);
     bool InitFromLocal(const neb::CJsonObject& oLocalConf);

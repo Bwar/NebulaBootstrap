@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Project:  Beacon
- * @file     CmdNodeDisconnect.hpp
+ * @file     CmdNodeReport.hpp
  * @brief 
  * @author   bwar
  * @date:    Feb 14, 2017
  * @note
  * Modify history:
  ******************************************************************************/
-#ifndef SRC_CMDNODEDISCONNECT_CMDNODEDISCONNECT_HPP_
-#define SRC_CMDNODEDISCONNECT_CMDNODEDISCONNECT_HPP_
+#ifndef SRC_CMDNODEREPORT_CMDNODEREPORT_HPP_
+#define SRC_CMDNODEREPORT_CMDNODEREPORT_HPP_
 
+#include <actor/cmd/Cmd.hpp>
 #include <Error.hpp>
 #include <util/json/CJsonObject.hpp>
-#include <object/cmd/Cmd.hpp>
 #include "SessionNode.hpp"
 
 #ifdef __cplusplus
@@ -26,11 +26,11 @@ extern "C" {
 namespace beacon
 {
 
-class CmdNodeDisconnect: public neb::Cmd
+class CmdNodeReport: public neb::Cmd, public neb::DynamicCreator<CmdNodeReport, int32>
 {
 public:
-    CmdNodeDisconnect();
-    virtual ~CmdNodeDisconnect();
+    CmdNodeReport(int32 iCmd);
+    virtual ~CmdNodeReport();
 
     virtual bool Init();
     virtual bool AnyMessage(
@@ -49,4 +49,4 @@ private:
 
 } /* namespace beacon */
 
-#endif /* SRC_CMDNODEDISCONNECT_CMDNODEDISCONNECT_HPP_ */
+#endif /* SRC_CMDNODEREPORT_CMDNODEREPORT_HPP_ */

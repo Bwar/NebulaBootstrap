@@ -7,13 +7,14 @@
  * @note
  * Modify history:
  ******************************************************************************/
+#include "Definition.hpp"
 #include "SessionNode.hpp"
 
 namespace beacon
 {
 
 SessionNode::SessionNode()
-    : neb::Session(1, 0.0, "beacon::SessionNode"),
+    : neb::Session(1, neb::gc_dNoTimeout, "beacon::SessionNode"),
       m_unLastNodeId(0)
 {
 }
@@ -34,10 +35,10 @@ void SessionNode::AddIpwhite(const std::string& strIpwhite)
 
 void SessionNode::AddSubscribe(const std::string& strNodeType, const std::string& strSubscribeNodeType)
 {
-    std::map<std::string, std::set<std::string> >::iterator pub_iter = m_mapPublisher.find(strSubscribeNodeType);
+    auto pub_iter = m_mapPublisher.find(strSubscribeNodeType);
     if (pub_iter == m_mapPublisher.end())
     {
-        std::set<std::string> setSubscriber;
+        std::unordered_set<std::string> setSubscriber;
         setSubscriber.insert(strNodeType);
         m_mapPublisher.insert(std::make_pair(strSubscribeNodeType, setSubscriber));
     }
@@ -51,14 +52,13 @@ uint16 SessionNode::AddNode(const neb::CJsonObject& oNodeInfo)
 {
     LOG4_TRACE("%s", __FUNCTION__);
     uint32 uiNodeId = 0;
-    std::set<uint16>::iterator node_id_iter;
-    std::map<std::string, uint16>::iterator identify_node_iter;
+    std::unordered_set<uint16>::iterator node_id_iter;
     std::string strNodeIdentify = oNodeInfo("node_ip") + std::string(":") + oNodeInfo("node_port");
     neb::CJsonObject oNodeInfoWithNodeId = oNodeInfo;
     oNodeInfo.Get("node_id", uiNodeId);
 
     // find node_id or create node_id
-    identify_node_iter = m_mapIdentifyNodeId.find(strNodeIdentify);
+    auto identify_node_iter = m_mapIdentifyNodeId.find(strNodeIdentify);
     if (identify_node_iter == m_mapIdentifyNodeId.end())
     {
         while (0 == uiNodeId)
@@ -84,10 +84,10 @@ uint16 SessionNode::AddNode(const neb::CJsonObject& oNodeInfo)
     oNodeInfoWithNodeId.Replace("node_id", uiNodeId);
 
 
-    std::map<std::string, std::map<std::string, neb::CJsonObject> >::iterator node_type_iter = m_mapNode.find(oNodeInfoWithNodeId("node_type"));
+    auto node_type_iter = m_mapNode.find(oNodeInfoWithNodeId("node_type"));
     if (node_type_iter == m_mapNode.end())
     {
-        std::map<std::string, neb::CJsonObject> mapNodeInfo;
+        std::unordered_map<std::string, neb::CJsonObject> mapNodeInfo;
         mapNodeInfo.insert(std::make_pair(strNodeIdentify, oNodeInfoWithNodeId));
         m_mapNode.insert(std::make_pair(oNodeInfoWithNodeId("node_type"), mapNodeInfo));
         m_mapIdentifyNodeType.insert(std::make_pair(strNodeIdentify, oNodeInfoWithNodeId("node_type")));
@@ -97,7 +97,7 @@ uint16 SessionNode::AddNode(const neb::CJsonObject& oNodeInfo)
     }
     else
     {
-        std::map<std::string, neb::CJsonObject>::iterator node_iter = node_type_iter->second.find(strNodeIdentify);
+        auto node_iter = node_type_iter->second.find(strNodeIdentify);
         if (node_iter == node_type_iter->second.end())
         {
             node_type_iter->second.insert(std::make_pair(strNodeIdentify, oNodeInfoWithNodeId));
@@ -118,13 +118,13 @@ uint16 SessionNode::AddNode(const neb::CJsonObject& oNodeInfo)
 void SessionNode::RemoveNode(const std::string& strNodeIdentify)
 {
     LOG4_TRACE("%s", __FUNCTION__);
-    std::map<std::string, std::string>::iterator identity_node_iter = m_mapIdentifyNodeType.find(strNodeIdentify);
+    auto identity_node_iter = m_mapIdentifyNodeType.find(strNodeIdentify);
     if (identity_node_iter != m_mapIdentifyNodeType.end())
     {
-        std::map<std::string, std::map<std::string, neb::CJsonObject> >::iterator node_type_iter = m_mapNode.find(identity_node_iter->second);
+        auto node_type_iter = m_mapNode.find(identity_node_iter->second);
         if (node_type_iter != m_mapNode.end())
         {
-            std::map<std::string, neb::CJsonObject>::iterator node_iter = node_type_iter->second.find(strNodeIdentify);
+            auto node_iter = node_type_iter->second.find(strNodeIdentify);
             if (node_iter != node_type_iter->second.end())
             {
                 uint32 uiNodeId = 0;
@@ -141,9 +141,9 @@ void SessionNode::RemoveNode(const std::string& strNodeIdentify)
 void SessionNode::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
 {
     LOG4_TRACE("%s", __FUNCTION__);
-    std::map<std::string, std::map<std::string, neb::CJsonObject> >::iterator node_list_iter;
-    std::map<std::string, neb::CJsonObject>::iterator node_iter;
-    std::set<std::string>::iterator node_type_iter;
+    std::unordered_map<std::string, std::unordered_map<std::string, neb::CJsonObject> >::iterator node_list_iter;
+    std::unordered_map<std::string, neb::CJsonObject>::iterator node_iter;
+    std::unordered_set<std::string>::iterator node_type_iter;
     neb::CJsonObject oSubcribeNodeInfo;
     neb::CJsonObject oAddNodes;
     neb::CJsonObject oAddedNodeInfo = oNodeInfo;
@@ -152,7 +152,7 @@ void SessionNode::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
     oAddNodes.Add("add_nodes", neb::CJsonObject("[]"));
     oAddNodes["add_nodes"].Add(oAddedNodeInfo);
     oSubcribeNodeInfo.Add("add_nodes", neb::CJsonObject("[]"));
-    for (std::map<std::string, std::set<std::string> >::iterator sub_iter = m_mapPublisher.begin();
+    for (auto sub_iter = m_mapPublisher.begin();
                     sub_iter != m_mapPublisher.end(); ++sub_iter)
     {
         for (node_type_iter = sub_iter->second.begin(); node_type_iter != sub_iter->second.end(); ++node_type_iter)
@@ -175,18 +175,8 @@ void SessionNode::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
 
                             MsgBody oMsgBody;
                             oMsgBody.set_data(oAddNodes.ToString());
-                            neb::Step* pStep = new StepNodeBroadcast(node_iter->first, neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
-                            if (Register(pStep))
-                            {
-                                if (neb::CMD_STATUS_RUNNING != pStep->Emit())
-                                {
-                                    Remove(pStep);
-                                }
-                            }
-                            else
-                            {
-                                DELETE(pStep);
-                            }
+                            neb::Step* pStep = NewStep("neb::StepNodeBroadcast", node_iter->first, neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
+                            pStep->Emit();
                         }
                     }
                     catch(std::bad_alloc& e)
@@ -225,18 +215,8 @@ void SessionNode::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
             oMsgBody.set_data(oSubcribeNodeInfo.ToString());
             snprintf(szThisNodeIdentity, sizeof(szThisNodeIdentity),
                             "%s:%s", oNodeInfo("node_ip").c_str(), oNodeInfo("node_port").c_str());
-            neb::Step* pStep = new StepNodeBroadcast(szThisNodeIdentity, neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
-            if (Register(pStep))
-            {
-                if (neb::CMD_STATUS_RUNNING != pStep->Emit())
-                {
-                    Remove(pStep);
-                }
-            }
-            else
-            {
-                DELETE(pStep);
-            }
+            neb::Step* pStep = NewStep("neb::StepNodeBroadcast", std::string(szThisNodeIdentity), neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
+            pStep->Emit();
         }
         catch(std::bad_alloc& e)
         {
@@ -248,16 +228,16 @@ void SessionNode::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
 void SessionNode::RemoveNodeBroadcast(const neb::CJsonObject& oNodeInfo)
 {
     LOG4_TRACE("%s", __FUNCTION__);
-    std::map<std::string, std::map<std::string, neb::CJsonObject> >::iterator node_list_iter;
-    std::map<std::string, neb::CJsonObject>::iterator node_iter;
-    std::set<std::string>::iterator node_type_iter;
+    std::unordered_map<std::string, std::unordered_map<std::string, neb::CJsonObject> >::iterator node_list_iter;
+    std::unordered_map<std::string, neb::CJsonObject>::iterator node_iter;
+    std::unordered_set<std::string>::iterator node_type_iter;
     neb::CJsonObject oDelNodes;
     neb::CJsonObject oDeletedNodeInfo = oNodeInfo;
     oDeletedNodeInfo.Delete("node");
     oDeletedNodeInfo.Delete("worker");
     oDelNodes.Add("del_nodes", neb::CJsonObject("[]"));
     oDelNodes["del_nodes"].Add(oDeletedNodeInfo);
-    for (std::map<std::string, std::set<std::string> >::iterator sub_iter = m_mapPublisher.begin();
+    for (auto sub_iter = m_mapPublisher.begin();
                     sub_iter != m_mapPublisher.end(); ++sub_iter)
     {
         for (node_type_iter = sub_iter->second.begin(); node_type_iter != sub_iter->second.end(); ++node_type_iter)
@@ -268,29 +248,12 @@ void SessionNode::RemoveNodeBroadcast(const neb::CJsonObject& oNodeInfo)
                 node_list_iter = m_mapNode.find(*node_type_iter);
                 if (node_list_iter != m_mapNode.end())
                 {
-                    try
+                    for (node_iter = node_list_iter->second.begin(); node_iter != node_list_iter->second.end(); ++node_iter)
                     {
-                        for (node_iter = node_list_iter->second.begin(); node_iter != node_list_iter->second.end(); ++node_iter)
-                        {
-                            MsgBody oMsgBody;
-                            oMsgBody.set_data(oDelNodes.ToString());
-                            neb::Step* pStep = new StepNodeBroadcast(node_iter->first, neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
-                            if (Register(pStep))
-                            {
-                                if (neb::CMD_STATUS_RUNNING != pStep->Emit())
-                                {
-                                    Remove(pStep);
-                                }
-                            }
-                            else
-                            {
-                                DELETE(pStep);
-                            }
-                        }
-                    }
-                    catch(std::bad_alloc& e)
-                    {
-                        LOG4_ERROR("new StepNodeBroadcast error: %s", e.what());
+                        MsgBody oMsgBody;
+                        oMsgBody.set_data(oDelNodes.ToString());
+                        neb::Step* pStep = NewStep("neb::StepNodeBroadcast", node_iter->first, neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
+                        pStep->Emit();
                     }
                 }
             }

@@ -8,26 +8,14 @@
  * Modify history:
  ******************************************************************************/
 
-#include <CmdNodeRegister/CmdNodeRegister.hpp>
+#include "CmdNodeRegister.hpp"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-neb::Cmd* create()
-{
-    neb::Cmd* pCmd = new beacon::CmdNodeRegister();
-    return(pCmd);
-}
-#ifdef __cplusplus
-}
-#endif
 
 namespace beacon
 {
 
-CmdNodeRegister::CmdNodeRegister()
-    : m_pSessionNode(NULL)
+CmdNodeRegister::CmdNodeRegister(int32 iCmd)
+    : neb::Cmd(iCmd), m_pSessionNode(nullptr)
 {
 }
 
@@ -37,16 +25,7 @@ CmdNodeRegister::~CmdNodeRegister()
 
 bool CmdNodeRegister::Init()
 {
-    try
-    {
-        m_pSessionNode = new SessionNode();
-    }
-    catch(std::bad_alloc& e)
-    {
-        LOG4_ERROR("new SessionNode error: %s", e.what());
-        return(false);
-    }
-    Register(m_pSessionNode);
+    m_pSessionNode = dynamic_cast<SessionNode*>(NewSession("beacon::SessionNode"));
 
     neb::CJsonObject oBeaconConf = GetCustomConf();
     if (std::string("db_config") == oBeaconConf("config_choice"))

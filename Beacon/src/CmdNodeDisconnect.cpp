@@ -9,23 +9,11 @@
  ******************************************************************************/
 #include "CmdNodeDisconnect.hpp"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    neb::Cmd* create()
-    {
-        neb::Cmd* pCmd = new beacon::CmdNodeDisconnect();
-        return(pCmd);
-    }
-#ifdef __cplusplus
-}
-#endif
-
 namespace beacon
 {
 
-CmdNodeDisconnect::CmdNodeDisconnect()
-    : m_pSessionNode(NULL)
+CmdNodeDisconnect::CmdNodeDisconnect(int32 iCmd)
+    : neb::Cmd(iCmd), m_pSessionNode(nullptr)
 {
 }
 

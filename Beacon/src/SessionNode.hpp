@@ -10,12 +10,12 @@
 #ifndef SRC_SESSIONNODE_HPP_
 #define SRC_SESSIONNODE_HPP_
 
-#include <string.h>
+#include <cstring>
 #include <string>
-#include <set>
-#include <map>
+#include <unordered_set>
+#include <unordered_map>
+#include <actor/session/Session.hpp>
 #include <util/json/CJsonObject.hpp>
-#include <object/session/Session.hpp>
 #include "StepNodeBroadcast.hpp"
 
 namespace beacon
@@ -68,7 +68,7 @@ struct tagNodeInfo
     tagNodeInfo& operator=(const tagNodeInfo& stNode);
 };
 
-class SessionNode: public neb::Session
+class SessionNode: public neb::Session, neb::DynamicCreator<SessionNode>
 {
 public:
     SessionNode();
@@ -97,12 +97,12 @@ protected:
 
 private:
     uint16 m_unLastNodeId;
-    std::set<std::string> m_setIpwhite;
-    std::map<std::string, std::set<std::string> > m_mapPublisher;               ///< map<node_type, set<subscribers_node_type> >
-    std::set<uint16> m_setNodeId;
-    std::map<std::string, uint16> m_mapIdentifyNodeId;                          ///< map<node_identify, node_id>
-    std::map<std::string, std::string> m_mapIdentifyNodeType;                   ///< map<node_Identify，node_type>
-    std::map<std::string, std::map<std::string, neb::CJsonObject> > m_mapNode;  ///< map<node_type, map<node_identify, neb::CJsonObject> >
+    std::unordered_set<std::string> m_setIpwhite;
+    std::unordered_map<std::string, std::unordered_set<std::string> > m_mapPublisher;               ///< map<node_type, set<subscribers_node_type> >
+    std::unordered_set<uint16> m_setNodeId;
+    std::unordered_map<std::string, uint16> m_mapIdentifyNodeId;                          ///< map<node_identify, node_id>
+    std::unordered_map<std::string, std::string> m_mapIdentifyNodeType;                   ///< map<node_Identify，node_type>
+    std::unordered_map<std::string, std::unordered_map<std::string, neb::CJsonObject> > m_mapNode;  ///< map<node_type, map<node_identify, neb::CJsonObject> >
 };
 
 }

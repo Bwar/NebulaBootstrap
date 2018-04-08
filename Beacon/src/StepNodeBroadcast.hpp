@@ -10,12 +10,12 @@
 #ifndef SRC_CMDREGISTER_STEPNODEBROADCAST_HPP_
 #define SRC_CMDREGISTER_STEPNODEBROADCAST_HPP_
 
-#include <object/step/PbStep.hpp>
+#include <actor/step/PbStep.hpp>
 
 namespace beacon
 {
 
-class StepNodeBroadcast: public neb::PbStep
+class StepNodeBroadcast: public neb::PbStep, public neb::DynamicCreator<StepNodeBroadcast, std::string, uint32, MsgBody>
 {
 public:
 public:
@@ -34,11 +34,6 @@ public:
             void* data = NULL);
 
     virtual neb::E_CMD_STATUS Timeout();
-
-    virtual std::string ObjectName() const
-    {
-        return("beacon::StepNodeBroadcast");
-    }
 
 private:
     std::string m_strTargetNodeIdentity;

@@ -9,23 +9,11 @@
  ******************************************************************************/
 #include "CmdNodeReport.hpp"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    neb::Cmd* create()
-    {
-        neb::Cmd* pCmd = new beacon::CmdNodeReport();
-        return(pCmd);
-    }
-#ifdef __cplusplus
-}
-#endif
-
 namespace beacon
 {
 
-CmdNodeReport::CmdNodeReport()
-    : m_pSessionNode(NULL)
+CmdNodeReport::CmdNodeReport(int32 iCmd)
+    : neb::Cmd(iCmd), m_pSessionNode(nullptr)
 {
 }
 
@@ -49,7 +37,7 @@ bool CmdNodeReport::AnyMessage(const neb::tagChannelContext& stCtx,
     if (NULL == m_pSessionNode)
     {
         m_pSessionNode = (SessionNode*)GetSession(1, "beacon::SessionNode");
-        if (NULL == m_pSessionNode)
+        if (nullptr == m_pSessionNode)
         {
             LOG4_ERROR("no session node found!");
         }
