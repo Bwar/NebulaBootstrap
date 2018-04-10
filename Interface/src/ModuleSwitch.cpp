@@ -7,25 +7,14 @@
  * @note
  * Modify history:
  ******************************************************************************/
+#include <fstream>
 #include "ModuleSwitch.hpp"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-neb::Module* create()
-{
-    neb::Module* pModule = new inter::ModuleSwitch();
-    return(pModule);
-}
-#ifdef __cplusplus
-}
-#endif
 
 namespace inter
 {
 
-ModuleSwitch::ModuleSwitch()
-    : pStepSwitch(NULL)
+ModuleSwitch::ModuleSwitch(const std::string& strModulePath)
+    : neb::Module(strModulePath), pStepSwitch(nullptr)
 {
 }
 
@@ -62,7 +51,7 @@ bool ModuleSwitch::Init()
             neb::CJsonObject* pModuleJson = NULL;
             if (oSwitchConf["module"].IsEmpty())
             {
-                LOG4_WARN("oSwitchConf[\"module\"] is empty!");
+                LOG4_WARNING("oSwitchConf[\"module\"] is empty!");
             }
             for (int i = 0; i < oSwitchConf["module"].GetArraySize(); ++i)
             {
@@ -127,31 +116,14 @@ bool ModuleSwitch::AnyMessage(
         return(false);
     }
 
-    try
-    {
-        pStepSwitch = new StepSwitch(stCtx, oInHttpMsg, module_conf_iter->second);
-    }
-    catch(std::bad_alloc& e)
-    {
-        LOG4_ERROR("new StepSwitch error: %s", e.what());
-        return(false);
-    }
-
-    if (Register(pStepSwitch))
+    pStepSwitch = dynamic_cast<StepSwitch*>(NewStep("inter::StepSwitch", stCtx, oInHttpMsg, module_conf_iter->second));
+    if ((pStepSwitch))
     {
         if (neb::CMD_STATUS_RUNNING == pStepSwitch->Emit(neb::ERR_OK))
         {
             LOG4_TRACE("pStepSwitch running");
             return(true);
         }
-        else
-        {
-            Remove(pStepSwitch);
-        }
-    }
-    else
-    {
-        DELETE(pStepSwitch);
     }
     return(false);
 }

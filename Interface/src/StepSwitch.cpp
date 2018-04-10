@@ -7,7 +7,7 @@
  * @note
  * Modify history:
  ******************************************************************************/
-#include <util/UnixTime.hpp>
+
 #include <util/http/http_parser.h>
 #include "StepSwitch.hpp"
 
@@ -15,7 +15,7 @@ namespace inter
 {
 
 StepSwitch::StepSwitch(const neb::tagChannelContext& stCtx,
-                const HttpMsg& oInHttpMsg, const neb::CJsonObject* pModuleConf, uint32 uiImid)
+                const HttpMsg& oInHttpMsg, const neb::CJsonObject* pModuleConf)
     : m_stCtx(stCtx), m_oInHttpMsg(oInHttpMsg), m_oModuleConf(pModuleConf)
 {
 }
@@ -64,21 +64,21 @@ neb::E_CMD_STATUS StepSwitch::EmitSwitch()
     {
         if (m_oSwitchMsgBody.req_target().route_id() > 0)
         {
-            SendToWithMod("LOGIC", m_oSwitchMsgBody.req_target().route_id(), uiCmd, GetSequence(), m_oSwitchMsgBody);
+            SendOriented("LOGIC", m_oSwitchMsgBody.req_target().route_id(), uiCmd, GetSequence(), m_oSwitchMsgBody);
         }
         else if (m_oSwitchMsgBody.req_target().route().size() > 0)
         {
             // TODO add a hash function
-            SendToWithMod("LOGIC", m_oSwitchMsgBody.req_target().route().size(), uiCmd, GetSequence(), m_oSwitchMsgBody);
+            SendOriented("LOGIC", m_oSwitchMsgBody.req_target().route().size(), uiCmd, GetSequence(), m_oSwitchMsgBody);
         }
         else
         {
-            SendToNext("LOGIC", uiCmd, GetSequence(), m_oSwitchMsgBody);
+            SendPolling("LOGIC", uiCmd, GetSequence(), m_oSwitchMsgBody);
         }
     }
     else
     {
-        SendToNext("LOGIC", uiCmd, GetSequence(), m_oSwitchMsgBody);
+        SendPolling("LOGIC", uiCmd, GetSequence(), m_oSwitchMsgBody);
     }
     return (neb::CMD_STATUS_RUNNING);
 }

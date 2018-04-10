@@ -10,20 +10,12 @@
 #ifndef SRC_MODULESWITCH_MODULESWITCH_HPP_
 #define SRC_MODULESWITCH_MODULESWITCH_HPP_
 
+#include <actor/cmd/Module.hpp>
 #include <string>
 #include <map>
 #include <Error.hpp>
 #include <util/json/CJsonObject.hpp>
-#include <object/cmd/Module.hpp>
 #include "StepSwitch.hpp"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-    neb::Module* create();
-#ifdef __cplusplus
-}
-#endif
 
 namespace inter
 {
@@ -31,7 +23,7 @@ namespace inter
 class ModuleSwitch: public neb::Module
 {
 public:
-    ModuleSwitch();
+    ModuleSwitch(const std::string& strModulePath);
     virtual ~ModuleSwitch();
 
     bool Init();

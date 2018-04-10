@@ -10,16 +10,16 @@
 #ifndef SRC_MODULESWITCH_STEPSWITCH_HPP_
 #define SRC_MODULESWITCH_STEPSWITCH_HPP_
 
+#include <actor/step/PbStep.hpp>
 #include "util/json/CJsonObject.hpp"
-#include "object/step/PbStep.hpp"
 
 namespace inter
 {
 
-class StepSwitch: public neb::PbStep
+class StepSwitch: public neb::PbStep, public neb::DynamicCreator<StepSwitch, neb::tagChannelContext, HttpMsg, neb::CJsonObject*>
 {
 public:
-    StepSwitch(const neb::tagChannelContext& stCtx, const HttpMsg& oInHttpMsg, const neb::CJsonObject* pModuleConf, uint32 uiImid = 0);
+    StepSwitch(const neb::tagChannelContext& stCtx, const HttpMsg& oInHttpMsg, const neb::CJsonObject* pModuleConf);
     virtual ~StepSwitch();
 
     virtual neb::E_CMD_STATUS Emit(int iErrno, const std::string& strErrMsg = "",  void* data = NULL);
