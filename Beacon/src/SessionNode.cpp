@@ -175,7 +175,7 @@ void SessionNode::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
 
                             MsgBody oMsgBody;
                             oMsgBody.set_data(oAddNodes.ToString());
-                            neb::Step* pStep = NewStep("neb::StepNodeBroadcast", node_iter->first, neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
+                            std::shared_ptr<neb::Step> pStep = MakeSharedStep("neb::StepNodeBroadcast", node_iter->first, neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
                             pStep->Emit();
                         }
                     }
@@ -215,7 +215,7 @@ void SessionNode::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
             oMsgBody.set_data(oSubcribeNodeInfo.ToString());
             snprintf(szThisNodeIdentity, sizeof(szThisNodeIdentity),
                             "%s:%s", oNodeInfo("node_ip").c_str(), oNodeInfo("node_port").c_str());
-            neb::Step* pStep = NewStep("neb::StepNodeBroadcast", std::string(szThisNodeIdentity), neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
+            std::shared_ptr<neb::Step> pStep = MakeSharedStep("neb::StepNodeBroadcast", std::string(szThisNodeIdentity), neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
             pStep->Emit();
         }
         catch(std::bad_alloc& e)
@@ -252,7 +252,7 @@ void SessionNode::RemoveNodeBroadcast(const neb::CJsonObject& oNodeInfo)
                     {
                         MsgBody oMsgBody;
                         oMsgBody.set_data(oDelNodes.ToString());
-                        neb::Step* pStep = NewStep("neb::StepNodeBroadcast", node_iter->first, neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
+                        std::shared_ptr<neb::Step> pStep = MakeSharedStep("neb::StepNodeBroadcast", node_iter->first, neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
                         pStep->Emit();
                     }
                 }

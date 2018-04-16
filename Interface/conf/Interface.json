@@ -13,7 +13,7 @@
     "//port":"系统内各Server之间通信监听的端口",
     "port":16004,
     "//server_name":"异步事件驱动Server",
-    "server_name":"Beacon",
+    "server_name":"neb_Interface",
     "//process_num":"进程数量",
     "process_num":10,
     "//worker_capacity":"子进程最大工作负荷",
@@ -33,6 +33,10 @@
     "log_levels":{"FATAL":50000, "ERROR":40000, "WARN":30000, "INFO":20000, "DEBUG":10000, "TRACE":0},
     "log_level":10000,
     "net_log_level":20000,
+    "//beacon":"控制中心",
+    "beacon":[
+        {"host":"192.168.1.11","port":"9987"}
+    ],
     "boot_load":{
         "cmd":[],
         "module":[

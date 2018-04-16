@@ -34,7 +34,7 @@ bool CmdNodeDisconnect::AnyMessage(const neb::tagChannelContext& stCtx,
     tagNodeInfo stNodeInfo;
     if (NULL == m_pSessionNode)
     {
-        m_pSessionNode = (SessionNode*)GetSession(1, "beacon::SessionNode");
+        m_pSessionNode = std::dynamic_pointer_cast<SessionNode>(GetSession(1, "beacon::SessionNode"));
         if (NULL == m_pSessionNode)
         {
             LOG4_ERROR("no session node found!");

@@ -116,7 +116,7 @@ bool ModuleSwitch::AnyMessage(
         return(false);
     }
 
-    pStepSwitch = dynamic_cast<StepSwitch*>(NewStep("inter::StepSwitch", stCtx, oInHttpMsg, module_conf_iter->second));
+    pStepSwitch = std::dynamic_pointer_cast<StepSwitch>(MakeSharedStep("inter::StepSwitch", stCtx, oInHttpMsg, module_conf_iter->second));
     if ((pStepSwitch))
     {
         if (neb::CMD_STATUS_RUNNING == pStepSwitch->Emit(neb::ERR_OK))

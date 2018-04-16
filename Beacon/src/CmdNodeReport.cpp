@@ -34,9 +34,9 @@ bool CmdNodeReport::AnyMessage(const neb::tagChannelContext& stCtx,
     MsgBody oOutMsgBody;
     neb::CJsonObject oNodeInfo;
     tagNodeInfo stNodeInfo;
-    if (NULL == m_pSessionNode)
+    if (nullptr == m_pSessionNode)
     {
-        m_pSessionNode = (SessionNode*)GetSession(1, "beacon::SessionNode");
+        m_pSessionNode = std::dynamic_pointer_cast<SessionNode>(GetSession(1, "beacon::SessionNode"));
         if (nullptr == m_pSessionNode)
         {
             LOG4_ERROR("no session node found!");

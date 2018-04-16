@@ -25,7 +25,7 @@ CmdNodeRegister::~CmdNodeRegister()
 
 bool CmdNodeRegister::Init()
 {
-    m_pSessionNode = dynamic_cast<SessionNode*>(NewSession("beacon::SessionNode"));
+    m_pSessionNode = std::dynamic_pointer_cast<SessionNode>(MakeSharedSession("beacon::SessionNode"));
 
     neb::CJsonObject oBeaconConf = GetCustomConf();
     if (std::string("db_config") == oBeaconConf("config_choice"))

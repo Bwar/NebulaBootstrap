@@ -44,7 +44,7 @@ public:
     }
 
 private:
-    SessionNode* m_pSessionNode;
+    std::shared_ptr<SessionNode> m_pSessionNode;
 };
 
 } /* namespace beacon */

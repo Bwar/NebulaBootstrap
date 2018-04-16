@@ -68,7 +68,6 @@ neb::E_CMD_STATUS StepSwitch::EmitSwitch()
         }
         else if (m_oSwitchMsgBody.req_target().route().size() > 0)
         {
-            // TODO add a hash function
             SendOriented("LOGIC", m_oSwitchMsgBody.req_target().route().size(), uiCmd, GetSequence(), m_oSwitchMsgBody);
         }
         else

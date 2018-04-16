@@ -46,7 +46,7 @@ private:
     std::map<std::string, neb::CJsonObject*> m_mapModuleConf;
 
 public:
-    StepSwitch* pStepSwitch;
+    std::shared_ptr<StepSwitch> pStepSwitch;
 };
 
 } /* namespace inter */
