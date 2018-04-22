@@ -29,7 +29,7 @@ public:
     bool Init();
 
     virtual bool AnyMessage(
-                    const neb::tagChannelContext& stCtx,
+                    std::shared_ptr<neb::SocketChannel> pUpstreamChannel,
                     const HttpMsg& oHttpMsg);
 
     virtual std::string ObjectName() const
@@ -38,7 +38,7 @@ public:
     }
 
 protected:
-    void Response(const neb::tagChannelContext& stMsgShell,
+    void Response(std::shared_ptr<neb::SocketChannel> pUpstreamChannel,
                     const HttpMsg& oInHttpMsg,
                     int iErrno, const std::string& strErrMsg);
 

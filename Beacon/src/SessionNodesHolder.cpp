@@ -1,39 +1,40 @@
 /*******************************************************************************
  * Project:  Beacon
- * @file     SessionNode.cpp
+ * @file     SessionNodesHolder.cpp
  * @brief 
  * @author   bwar
  * @date:    Sep 20, 2016
  * @note
  * Modify history:
  ******************************************************************************/
+
 #include "Definition.hpp"
-#include "SessionNode.hpp"
+#include "SessionNodesHolder.hpp"
 
 namespace beacon
 {
 
-SessionNode::SessionNode()
-    : neb::Session(1, neb::gc_dNoTimeout, "beacon::SessionNode"),
+SessionNodesHolder::SessionNodesHolder()
+    : neb::Session(1, neb::gc_dNoTimeout, "beacon::SessionNodesHolder"),
       m_unLastNodeId(0)
 {
 }
 
-SessionNode::~SessionNode()
+SessionNodesHolder::~SessionNodesHolder()
 {
 }
 
-neb::E_CMD_STATUS SessionNode::Timeout()
+neb::E_CMD_STATUS SessionNodesHolder::Timeout()
 {
     return(neb::CMD_STATUS_RUNNING);
 }
 
-void SessionNode::AddIpwhite(const std::string& strIpwhite)
+void SessionNodesHolder::AddIpwhite(const std::string& strIpwhite)
 {
     m_setIpwhite.insert(strIpwhite);
 }
 
-void SessionNode::AddSubscribe(const std::string& strNodeType, const std::string& strSubscribeNodeType)
+void SessionNodesHolder::AddSubscribe(const std::string& strNodeType, const std::string& strSubscribeNodeType)
 {
     auto pub_iter = m_mapPublisher.find(strSubscribeNodeType);
     if (pub_iter == m_mapPublisher.end())
@@ -48,7 +49,7 @@ void SessionNode::AddSubscribe(const std::string& strNodeType, const std::string
     }
 }
 
-uint16 SessionNode::AddNode(const neb::CJsonObject& oNodeInfo)
+uint16 SessionNodesHolder::AddNode(const neb::CJsonObject& oNodeInfo)
 {
     LOG4_TRACE("%s", __FUNCTION__);
     uint32 uiNodeId = 0;
@@ -115,7 +116,7 @@ uint16 SessionNode::AddNode(const neb::CJsonObject& oNodeInfo)
     }
 }
 
-void SessionNode::RemoveNode(const std::string& strNodeIdentify)
+void SessionNodesHolder::RemoveNode(const std::string& strNodeIdentify)
 {
     LOG4_TRACE("%s", __FUNCTION__);
     auto identity_node_iter = m_mapIdentifyNodeType.find(strNodeIdentify);
@@ -138,7 +139,7 @@ void SessionNode::RemoveNode(const std::string& strNodeIdentify)
     }
 }
 
-void SessionNode::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
+void SessionNodesHolder::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
 {
     LOG4_TRACE("%s", __FUNCTION__);
     std::unordered_map<std::string, std::unordered_map<std::string, neb::CJsonObject> >::iterator node_list_iter;
@@ -225,7 +226,7 @@ void SessionNode::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
     }
 }
 
-void SessionNode::RemoveNodeBroadcast(const neb::CJsonObject& oNodeInfo)
+void SessionNodesHolder::RemoveNodeBroadcast(const neb::CJsonObject& oNodeInfo)
 {
     LOG4_TRACE("%s", __FUNCTION__);
     std::unordered_map<std::string, std::unordered_map<std::string, neb::CJsonObject> >::iterator node_list_iter;
@@ -259,49 +260,6 @@ void SessionNode::RemoveNodeBroadcast(const neb::CJsonObject& oNodeInfo)
             }
         }
     }
-}
-
-tagNodeInfo::tagNodeInfo()
-    : ucStatus(0), unWorkerNum(0), unNodeId(0), uiHostPort(0), uiGatePort(0),
-      uiLoad(0), uiConnection(0), uiRecvNum(0), uiSentNum(0), uiRecvByte(0), uiSentByte(0),
-      uiClient(0), ullActiveTime(0)
-{
-    memset(szNodeType, 0, sizeof(szNodeType));
-    memset(szHost, 0, sizeof(szHost));
-    memset(szGate, 0, sizeof(szGate));
-}
-
-tagNodeInfo::tagNodeInfo(const tagNodeInfo& stNode)
-    : ucStatus(stNode.ucStatus), unWorkerNum(stNode.unWorkerNum),
-      unNodeId(stNode.unNodeId), uiHostPort(stNode.uiHostPort), uiGatePort(stNode.uiGatePort),
-      uiLoad(stNode.uiLoad), uiConnection(stNode.uiConnection),
-      uiRecvNum(stNode.uiRecvNum), uiSentNum(stNode.uiSentNum), uiRecvByte(stNode.uiRecvByte), uiSentByte(stNode.uiSentByte),
-      uiClient(stNode.uiClient), ullActiveTime(stNode.ullActiveTime)
-{
-    snprintf(szNodeType, sizeof(szNodeType), stNode.szNodeType);
-    snprintf(szHost, sizeof(szHost), stNode.szHost);
-    snprintf(szGate, sizeof(szGate), stNode.szGate);
-}
-
-tagNodeInfo& tagNodeInfo::operator=(const tagNodeInfo& stNode)
-{
-    snprintf(szNodeType, sizeof(szNodeType), stNode.szNodeType);
-    snprintf(szHost, sizeof(szHost), stNode.szHost);
-    snprintf(szGate, sizeof(szGate), stNode.szGate);
-    ucStatus = stNode.ucStatus;
-    unWorkerNum = stNode.unWorkerNum;
-    unNodeId = stNode.unNodeId;
-    uiHostPort = stNode.uiHostPort;
-    uiGatePort = stNode.uiGatePort;
-    uiLoad = stNode.uiLoad;
-    uiConnection = stNode.uiConnection;
-    uiRecvNum = stNode.uiRecvNum;
-    uiSentNum = stNode.uiSentNum;
-    uiRecvByte = stNode.uiRecvByte;
-    uiSentByte = stNode.uiSentByte;
-    uiClient = stNode.uiClient;
-    ullActiveTime = stNode.ullActiveTime;
-    return(*this);
 }
 
 }

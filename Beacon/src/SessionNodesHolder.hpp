@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Project:  Beacon
- * @file     SessionNode.hpp
+ * @file     SessionNodesHolder.hpp
  * @brief 
  * @author   bwar
  * @date:    Sep 20, 2016
  * @note
  * Modify history:
  ******************************************************************************/
-#ifndef SRC_SESSIONNODE_HPP_
-#define SRC_SESSIONNODE_HPP_
+#ifndef SRC_SESSIONNODESHOLDER_HPP_
+#define SRC_SESSIONNODESHOLDER_HPP_
 
 #include <cstring>
 #include <string>
@@ -44,42 +44,14 @@ namespace beacon
  *     ]
  * }
  */
-struct tagNodeInfo
-{
-    char szNodeType[32];                    ///< node type
-    char szHost[32];                        ///< ip address binded for inner communication
-    char szGate[32];                        ///< ip address binded for outer communication
-    uint8 ucStatus;                         ///< status: 0 offline,  1 online
-    uint16 unWorkerNum;                     ///< worker process number
-    uint16 unNodeId;                        ///< node id
-    uint32 uiHostPort;                      ///<
-    uint32 uiGatePort;                      ///<
-    uint32 uiLoad;                          ///<
-    uint32 uiConnection;                    ///< connection number
-    uint32 uiRecvNum;                       ///<
-    uint32 uiSentNum;                       ///<
-    uint32 uiRecvByte;                      ///<
-    uint32 uiSentByte;                      ///<
-    uint32 uiClient;                        ///< client number, part of connection
-    uint64 ullActiveTime;                   ///<
 
-    tagNodeInfo();
-    tagNodeInfo(const tagNodeInfo& stNode);
-    tagNodeInfo& operator=(const tagNodeInfo& stNode);
-};
-
-class SessionNode: public neb::Session, neb::DynamicCreator<SessionNode>
+class SessionNodesHolder: public neb::Session, neb::DynamicCreator<SessionNodesHolder>
 {
 public:
-    SessionNode();
-    virtual ~SessionNode();
+    SessionNodesHolder();
+    virtual ~SessionNodesHolder();
 
     virtual neb::E_CMD_STATUS Timeout();
-
-    virtual std::string ObjectName() const
-    {
-        return("beacon::SessionNode");
-    }
 
 public:
     void AddIpwhite(const std::string& strIpwhite);
@@ -107,4 +79,4 @@ private:
 
 }
 
-#endif /* SRC_SESSIONNODE_HPP_ */
+#endif /* SRC_SESSIONNODESHOLDER_HPP_ */

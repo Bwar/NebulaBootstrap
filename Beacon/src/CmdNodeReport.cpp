@@ -13,7 +13,7 @@ namespace beacon
 {
 
 CmdNodeReport::CmdNodeReport(int32 iCmd)
-    : neb::Cmd(iCmd), m_pSessionNode(nullptr)
+    : neb::Cmd(iCmd), m_pSessionNodesHolder(nullptr)
 {
 }
 
@@ -26,25 +26,24 @@ bool CmdNodeReport::Init()
     return(true);
 }
 
-bool CmdNodeReport::AnyMessage(const neb::tagChannelContext& stCtx,
+bool CmdNodeReport::AnyMessage(std::shared_ptr<neb::SocketChannel> pUpstreamChannel,
                 const MsgHead& oMsgHead,
                 const MsgBody& oMsgBody)
 {
     MsgHead oOutMsgHead;
     MsgBody oOutMsgBody;
     neb::CJsonObject oNodeInfo;
-    tagNodeInfo stNodeInfo;
-    if (nullptr == m_pSessionNode)
+    if (nullptr == m_pSessionNodesHolder)
     {
-        m_pSessionNode = std::dynamic_pointer_cast<SessionNode>(GetSession(1, "beacon::SessionNode"));
-        if (nullptr == m_pSessionNode)
+        m_pSessionNodesHolder = std::dynamic_pointer_cast<SessionNodesHolder>(GetSession(1, "beacon::SessionNodesHolder"));
+        if (nullptr == m_pSessionNodesHolder)
         {
             LOG4_ERROR("no session node found!");
         }
     }
     if (oNodeInfo.Parse(oMsgBody.data()))
     {
-        uint16 unNodeId = m_pSessionNode->AddNode(oNodeInfo);
+        uint16 unNodeId = m_pSessionNodesHolder->AddNode(oNodeInfo);
         if (0 == unNodeId)
         {
             oOutMsgBody.mutable_rsp_result()->set_code(neb::ERR_NODE_NUM);
@@ -65,7 +64,7 @@ bool CmdNodeReport::AnyMessage(const neb::tagChannelContext& stCtx,
         oOutMsgBody.mutable_rsp_result()->set_code(neb::ERR_BODY_JSON);
         oOutMsgBody.mutable_rsp_result()->set_msg("failed to parse node info json from MsgBody.data()!");
     }
-    return(SendTo(stCtx, oMsgHead.cmd() + 1, oMsgHead.seq(), oOutMsgBody));
+    return(SendTo(pUpstreamChannel, oMsgHead.cmd() + 1, oMsgHead.seq(), oOutMsgBody));
 }
 
 } /* namespace beacon */

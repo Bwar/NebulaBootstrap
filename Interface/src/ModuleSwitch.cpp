@@ -101,7 +101,7 @@ bool ModuleSwitch::Init()
 }
 
 bool ModuleSwitch::AnyMessage(
-                const neb::tagChannelContext& stCtx,
+                std::shared_ptr<neb::SocketChannel> pUpstreamChannel,
                 const HttpMsg& oInHttpMsg)
 {
     std::map<std::string, neb::CJsonObject*>::iterator module_conf_iter = m_mapModuleConf.find(oInHttpMsg.path());
@@ -116,7 +116,7 @@ bool ModuleSwitch::AnyMessage(
         return(false);
     }
 
-    pStepSwitch = std::dynamic_pointer_cast<StepSwitch>(MakeSharedStep("inter::StepSwitch", stCtx, oInHttpMsg, module_conf_iter->second));
+    pStepSwitch = std::dynamic_pointer_cast<StepSwitch>(MakeSharedStep("inter::StepSwitch", pUpstreamChannel, oInHttpMsg, module_conf_iter->second));
     if ((pStepSwitch))
     {
         if (neb::CMD_STATUS_RUNNING == pStepSwitch->Emit(neb::ERR_OK))
@@ -128,7 +128,7 @@ bool ModuleSwitch::AnyMessage(
     return(false);
 }
 
-void ModuleSwitch::Response(const neb::tagChannelContext& stCtx, const HttpMsg& oInHttpMsg, int iErrno, const std::string& strErrMsg)
+void ModuleSwitch::Response(std::shared_ptr<neb::SocketChannel> pUpstreamChannel, const HttpMsg& oInHttpMsg, int iErrno, const std::string& strErrMsg)
 {
     HttpMsg oHttpMsg;
     neb::CJsonObject oResponseData;
@@ -143,7 +143,7 @@ void ModuleSwitch::Response(const neb::tagChannelContext& stCtx, const HttpMsg& 
         oResponseData.Add("data", neb::CJsonObject("[]"));
     }
     oHttpMsg.set_body(oResponseData.ToFormattedString());
-    SendTo(stCtx, oHttpMsg);
+    SendTo(pUpstreamChannel, oHttpMsg);
 }
 
 } /* namespace inter */

@@ -14,9 +14,9 @@
 namespace inter
 {
 
-StepSwitch::StepSwitch(const neb::tagChannelContext& stCtx,
+StepSwitch::StepSwitch(std::shared_ptr<neb::SocketChannel> pUpstreamChannel,
                 const HttpMsg& oInHttpMsg, const neb::CJsonObject* pModuleConf)
-    : m_stCtx(stCtx), m_oInHttpMsg(oInHttpMsg), m_oModuleConf(pModuleConf)
+    : m_pRequestUpstreamChannel(pUpstreamChannel), m_oInHttpMsg(oInHttpMsg), m_oModuleConf(pModuleConf)
 {
 }
 
@@ -38,13 +38,13 @@ neb::E_CMD_STATUS StepSwitch::Emit(int iErrno, const std::string& strErrMsg, voi
 }
 
 neb::E_CMD_STATUS StepSwitch::Callback(
-        const neb::tagChannelContext& stCtx,
+        std::shared_ptr<neb::SocketChannel> pUpstreamChannel,
         const MsgHead& oInMsgHead,
         const MsgBody& oInMsgBody,
         void* data)
 {
     LOG4_TRACE("%s()", __FUNCTION__);
-    return(CallbackSwitch(stCtx, oInMsgHead, oInMsgBody));
+    return(CallbackSwitch(pUpstreamChannel, oInMsgHead, oInMsgBody));
 }
 
 neb::E_CMD_STATUS StepSwitch::Timeout()
@@ -83,7 +83,7 @@ neb::E_CMD_STATUS StepSwitch::EmitSwitch()
 }
 
 neb::E_CMD_STATUS StepSwitch::CallbackSwitch(
-                const neb::tagChannelContext& stCtx, const MsgHead& oInMsgHead, const MsgBody& oInMsgBody)
+                std::shared_ptr<neb::SocketChannel> pUpstreamChannel, const MsgHead& oInMsgHead, const MsgBody& oInMsgBody)
 {
     LOG4_DEBUG("%s()", __FUNCTION__);
     HttpMsg oHttpMsg;
@@ -92,7 +92,7 @@ neb::E_CMD_STATUS StepSwitch::CallbackSwitch(
     oHttpMsg.set_http_major(m_oInHttpMsg.http_major());
     oHttpMsg.set_http_minor(m_oInHttpMsg.http_minor());
     oHttpMsg.set_body(oInMsgBody.data());
-    SendTo(m_stCtx, oHttpMsg);
+    SendTo(m_pRequestUpstreamChannel, oHttpMsg);
     return (neb::CMD_STATUS_COMPLETED);
 }
 
@@ -112,7 +112,7 @@ void StepSwitch::Response(int iErrno, const std::string& strErrMsg, const std::s
         oResponseData.Add("data", neb::CJsonObject("[]"));
     }
     oHttpMsg.set_body(oResponseData.ToFormattedString());
-    SendTo(m_stCtx, oHttpMsg);
+    SendTo(m_pRequestUpstreamChannel, oHttpMsg);
 }
 
 } /* namespace im */

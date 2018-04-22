@@ -12,8 +12,8 @@
 
 #include <actor/cmd/Cmd.hpp>
 #include <Error.hpp>
+#include <SessionNodesHolder.hpp>
 #include <util/json/CJsonObject.hpp>
-#include "SessionNode.hpp"
 
 namespace beacon
 {
@@ -26,7 +26,7 @@ public:
 
     virtual bool Init();
     virtual bool AnyMessage(
-                    const neb::tagChannelContext& stCtx,
+                    std::shared_ptr<neb::SocketChannel> pUpstreamChannel,
                     const MsgHead& oMsgHead,
                     const MsgBody& oMsgBody);
 
@@ -36,7 +36,7 @@ public:
     }
 
 private:
-    std::shared_ptr<SessionNode> m_pSessionNode;
+    std::shared_ptr<SessionNodesHolder> m_pSessionNodesHolder;
 };
 
 } /* namespace beacon */

@@ -10,12 +10,11 @@
 
 #include "CmdNodeRegister.hpp"
 
-
 namespace beacon
 {
 
 CmdNodeRegister::CmdNodeRegister(int32 iCmd)
-    : neb::Cmd(iCmd), m_pSessionNode(nullptr)
+    : neb::Cmd(iCmd), m_pSessionNodesHolder(nullptr)
 {
 }
 
@@ -25,7 +24,7 @@ CmdNodeRegister::~CmdNodeRegister()
 
 bool CmdNodeRegister::Init()
 {
-    m_pSessionNode = std::dynamic_pointer_cast<SessionNode>(MakeSharedSession("beacon::SessionNode"));
+    m_pSessionNodesHolder = std::dynamic_pointer_cast<SessionNodesHolder>(MakeSharedSession("beacon::SessionNodesHolder"));
 
     neb::CJsonObject oBeaconConf = GetCustomConf();
     if (std::string("db_config") == oBeaconConf("config_choice"))
@@ -53,13 +52,13 @@ bool CmdNodeRegister::InitFromLocal(const neb::CJsonObject& oLocalConf)
     neb::CJsonObject oBeacon = oLocalConf;
     for (int i = 0; i < oBeacon["ipwhite"].GetArraySize(); ++i)
     {
-        m_pSessionNode->AddIpwhite(oBeacon["ipwhite"](i));
+        m_pSessionNodesHolder->AddIpwhite(oBeacon["ipwhite"](i));
     }
     for (int i = 0; i < oBeacon["node_type"].GetArraySize(); ++i)
     {
         for (int j = 0; j < oBeacon["node_type"][i]["subscribe"].GetArraySize(); ++j)
         {
-            m_pSessionNode->AddSubscribe(oBeacon["node_type"][i]("node_type"), oBeacon["node_type"][i]["subscribe"](j));
+            m_pSessionNodesHolder->AddSubscribe(oBeacon["node_type"][i]("node_type"), oBeacon["node_type"][i]["subscribe"](j));
         }
     }
     return(true);
@@ -90,37 +89,16 @@ bool CmdNodeRegister::InitFromLocal(const neb::CJsonObject& oLocalConf)
  */
 
 bool CmdNodeRegister::AnyMessage(
-                const neb::tagChannelContext& stCtx,
+                std::shared_ptr<neb::SocketChannel> pUpstreamChannel,
                 const MsgHead& oMsgHead, const MsgBody& oMsgBody)
 {
     MsgHead oOutMsgHead;
     MsgBody oOutMsgBody;
     neb::CJsonObject oNodeInfo;
-    tagNodeInfo stNodeInfo;
-    SendTo(stCtx, oMsgHead.cmd() + 1, oMsgHead.seq(), oOutMsgBody);
+    SendTo(pUpstreamChannel, oMsgHead.cmd() + 1, oMsgHead.seq(), oOutMsgBody);
     if (oNodeInfo.Parse(oMsgBody.data()))
     {
-        /*
-        char szNodeIdentify[32] = {0};
-        snprintf(stNodeInfo.szNodeType, sizeof(stNodeInfo.szNodeType), oNodeInfo("node_type").c_str());
-        snprintf(stNodeInfo.szHost, sizeof(stNodeInfo.szHost), oNodeInfo("node_ip").c_str());
-        snprintf(stNodeInfo.szGate, sizeof(stNodeInfo.szGate), oNodeInfo("gate_ip").c_str());
-        stNodeInfo.ucStatus = 1;
-        stNodeInfo.unWorkerNum = strtoul(oNodeInfo("worker_num").c_str(), NULL, 10);
-        stNodeInfo.unNodeId = 0;
-        stNodeInfo.uiHostPort = strtoul(oNodeInfo("node_port").c_str(), NULL, 10);
-        stNodeInfo.uiGatePort = strtoul(oNodeInfo("gate_port").c_str(), NULL, 10);
-        stNodeInfo.uiLoad = strtoul(oNodeInfo["node"]("load").c_str(), NULL, 10);
-        stNodeInfo.uiConnection = strtoul(oNodeInfo["node"]("connect").c_str(), NULL, 10);
-        stNodeInfo.uiRecvNum = strtoul(oNodeInfo["node"]("recv_num").c_str(), NULL, 10);
-        stNodeInfo.uiSentNum = strtoul(oNodeInfo["node"]("sent_num").c_str(), NULL, 10);
-        stNodeInfo.uiRecvByte = strtoul(oNodeInfo["node"]("recv_byte").c_str(), NULL, 10);
-        stNodeInfo.uiSentByte = strtoul(oNodeInfo["node"]("sent_byte").c_str(), NULL, 10);
-        stNodeInfo.uiClient = strtoul(oNodeInfo["node"]("client").c_str(), NULL, 10);
-        stNodeInfo.ullActiveTime = GetNowTime();
-        snprintf(szNodeIdentify, sizeof(szNodeIdentify), "%s:%u", stNodeInfo.szHost, stNodeInfo.uiHostPort);
-        */
-        uint16 unNodeId = m_pSessionNode->AddNode(oNodeInfo);
+        uint16 unNodeId = m_pSessionNodesHolder->AddNode(oNodeInfo);
         if (0 == unNodeId)
         {
             oOutMsgBody.mutable_rsp_result()->set_code(neb::ERR_NODE_NUM);
