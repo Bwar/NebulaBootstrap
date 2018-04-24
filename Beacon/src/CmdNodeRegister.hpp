@@ -12,7 +12,7 @@
 
 #include <actor/cmd/Cmd.hpp>
 #include <Error.hpp>
-#include <SessionNodesHolder.hpp>
+#include <SessionOnlineNodes.hpp>
 #include <util/json/CJsonObject.hpp>
 
 namespace beacon
@@ -34,7 +34,7 @@ protected:
     bool InitFromLocal(const neb::CJsonObject& oLocalConf);
 
 private:
-    std::shared_ptr<SessionNodesHolder> m_pSessionNodesHolder;
+    std::shared_ptr<SessionOnlineNodes> m_pSessionOnlineNodes;
 };
 
 } /* namespace beacon */

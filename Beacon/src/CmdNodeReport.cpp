@@ -13,7 +13,7 @@ namespace beacon
 {
 
 CmdNodeReport::CmdNodeReport(int32 iCmd)
-    : neb::Cmd(iCmd), m_pSessionNodesHolder(nullptr)
+    : neb::Cmd(iCmd), m_pSessionOnlineNodes(nullptr)
 {
 }
 
@@ -33,17 +33,17 @@ bool CmdNodeReport::AnyMessage(std::shared_ptr<neb::SocketChannel> pUpstreamChan
     MsgHead oOutMsgHead;
     MsgBody oOutMsgBody;
     neb::CJsonObject oNodeInfo;
-    if (nullptr == m_pSessionNodesHolder)
+    if (nullptr == m_pSessionOnlineNodes)
     {
-        m_pSessionNodesHolder = std::dynamic_pointer_cast<SessionNodesHolder>(GetSession(1, "beacon::SessionNodesHolder"));
-        if (nullptr == m_pSessionNodesHolder)
+        m_pSessionOnlineNodes = std::dynamic_pointer_cast<SessionOnlineNodes>(GetSession(1, "beacon::SessionOnlineNodes"));
+        if (nullptr == m_pSessionOnlineNodes)
         {
             LOG4_ERROR("no session node found!");
         }
     }
     if (oNodeInfo.Parse(oMsgBody.data()))
     {
-        uint16 unNodeId = m_pSessionNodesHolder->AddNode(oNodeInfo);
+        uint16 unNodeId = m_pSessionOnlineNodes->AddNode(oNodeInfo);
         if (0 == unNodeId)
         {
             oOutMsgBody.mutable_rsp_result()->set_code(neb::ERR_NODE_NUM);

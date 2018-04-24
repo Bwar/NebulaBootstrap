@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Project:  Beacon
- * @file     SessionNodesHolder.cpp
+ * @file     SessionOnlineNodes.cpp
  * @brief 
  * @author   bwar
  * @date:    Sep 20, 2016
@@ -9,32 +9,32 @@
  ******************************************************************************/
 
 #include "Definition.hpp"
-#include "SessionNodesHolder.hpp"
+#include "SessionOnlineNodes.hpp"
 
 namespace beacon
 {
 
-SessionNodesHolder::SessionNodesHolder()
-    : neb::Session(1, neb::gc_dNoTimeout, "beacon::SessionNodesHolder"),
+SessionOnlineNodes::SessionOnlineNodes()
+    : neb::Session(1, neb::gc_dNoTimeout, "beacon::SessionOnlineNodes"),
       m_unLastNodeId(0)
 {
 }
 
-SessionNodesHolder::~SessionNodesHolder()
+SessionOnlineNodes::~SessionOnlineNodes()
 {
 }
 
-neb::E_CMD_STATUS SessionNodesHolder::Timeout()
+neb::E_CMD_STATUS SessionOnlineNodes::Timeout()
 {
     return(neb::CMD_STATUS_RUNNING);
 }
 
-void SessionNodesHolder::AddIpwhite(const std::string& strIpwhite)
+void SessionOnlineNodes::AddIpwhite(const std::string& strIpwhite)
 {
     m_setIpwhite.insert(strIpwhite);
 }
 
-void SessionNodesHolder::AddSubscribe(const std::string& strNodeType, const std::string& strSubscribeNodeType)
+void SessionOnlineNodes::AddSubscribe(const std::string& strNodeType, const std::string& strSubscribeNodeType)
 {
     auto pub_iter = m_mapPublisher.find(strSubscribeNodeType);
     if (pub_iter == m_mapPublisher.end())
@@ -49,7 +49,7 @@ void SessionNodesHolder::AddSubscribe(const std::string& strNodeType, const std:
     }
 }
 
-uint16 SessionNodesHolder::AddNode(const neb::CJsonObject& oNodeInfo)
+uint16 SessionOnlineNodes::AddNode(const neb::CJsonObject& oNodeInfo)
 {
     LOG4_TRACE("%s", __FUNCTION__);
     uint32 uiNodeId = 0;
@@ -116,7 +116,7 @@ uint16 SessionNodesHolder::AddNode(const neb::CJsonObject& oNodeInfo)
     }
 }
 
-void SessionNodesHolder::RemoveNode(const std::string& strNodeIdentify)
+void SessionOnlineNodes::RemoveNode(const std::string& strNodeIdentify)
 {
     LOG4_TRACE("%s", __FUNCTION__);
     auto identity_node_iter = m_mapIdentifyNodeType.find(strNodeIdentify);
@@ -139,7 +139,7 @@ void SessionNodesHolder::RemoveNode(const std::string& strNodeIdentify)
     }
 }
 
-void SessionNodesHolder::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
+void SessionOnlineNodes::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
 {
     LOG4_TRACE("%s", __FUNCTION__);
     std::unordered_map<std::string, std::unordered_map<std::string, neb::CJsonObject> >::iterator node_list_iter;
@@ -226,7 +226,7 @@ void SessionNodesHolder::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
     }
 }
 
-void SessionNodesHolder::RemoveNodeBroadcast(const neb::CJsonObject& oNodeInfo)
+void SessionOnlineNodes::RemoveNodeBroadcast(const neb::CJsonObject& oNodeInfo)
 {
     LOG4_TRACE("%s", __FUNCTION__);
     std::unordered_map<std::string, std::unordered_map<std::string, neb::CJsonObject> >::iterator node_list_iter;

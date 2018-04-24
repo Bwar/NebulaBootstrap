@@ -3,13 +3,6 @@ CXX = g++
 CFLAGS = -g -O2 -fPIC 
 CXXFLAG =  -std=c++14 -O2 -Wall -ggdb -m64 -D_GNU_SOURCE=1 -D_REENTRANT -D__GUNC__ -fPIC -DNODE_BEAT=10.0 
 
-DEFINE_SERVER = -DNODE_TYPE_BEACON
-
-
-ifeq ($(unit_test),y)
-CXXFLAG += -DUNIT_TEST
-endif
-
 ARCH:=$(shell uname -m)
 
 ARCH32:=i686

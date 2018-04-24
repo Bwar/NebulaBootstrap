@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Project:  Beacon
- * @file     SessionNodesHolder.hpp
+ * @file     SessionOnlineNodes.hpp
  * @brief 
  * @author   bwar
  * @date:    Sep 20, 2016
@@ -45,11 +45,11 @@ namespace beacon
  * }
  */
 
-class SessionNodesHolder: public neb::Session, neb::DynamicCreator<SessionNodesHolder>
+class SessionOnlineNodes: public neb::Session, neb::DynamicCreator<SessionOnlineNodes>
 {
 public:
-    SessionNodesHolder();
-    virtual ~SessionNodesHolder();
+    SessionOnlineNodes();
+    virtual ~SessionOnlineNodes();
 
     virtual neb::E_CMD_STATUS Timeout();
 

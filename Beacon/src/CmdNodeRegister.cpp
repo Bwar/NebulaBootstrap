@@ -14,7 +14,7 @@ namespace beacon
 {
 
 CmdNodeRegister::CmdNodeRegister(int32 iCmd)
-    : neb::Cmd(iCmd), m_pSessionNodesHolder(nullptr)
+    : neb::Cmd(iCmd), m_pSessionOnlineNodes(nullptr)
 {
 }
 
@@ -24,7 +24,7 @@ CmdNodeRegister::~CmdNodeRegister()
 
 bool CmdNodeRegister::Init()
 {
-    m_pSessionNodesHolder = std::dynamic_pointer_cast<SessionNodesHolder>(MakeSharedSession("beacon::SessionNodesHolder"));
+    m_pSessionOnlineNodes = std::dynamic_pointer_cast<SessionOnlineNodes>(MakeSharedSession("beacon::SessionOnlineNodes"));
 
     neb::CJsonObject oBeaconConf = GetCustomConf();
     if (std::string("db_config") == oBeaconConf("config_choice"))
@@ -52,13 +52,13 @@ bool CmdNodeRegister::InitFromLocal(const neb::CJsonObject& oLocalConf)
     neb::CJsonObject oBeacon = oLocalConf;
     for (int i = 0; i < oBeacon["ipwhite"].GetArraySize(); ++i)
     {
-        m_pSessionNodesHolder->AddIpwhite(oBeacon["ipwhite"](i));
+        m_pSessionOnlineNodes->AddIpwhite(oBeacon["ipwhite"](i));
     }
     for (int i = 0; i < oBeacon["node_type"].GetArraySize(); ++i)
     {
         for (int j = 0; j < oBeacon["node_type"][i]["subscribe"].GetArraySize(); ++j)
         {
-            m_pSessionNodesHolder->AddSubscribe(oBeacon["node_type"][i]("node_type"), oBeacon["node_type"][i]["subscribe"](j));
+            m_pSessionOnlineNodes->AddSubscribe(oBeacon["node_type"][i]("node_type"), oBeacon["node_type"][i]["subscribe"](j));
         }
     }
     return(true);
@@ -98,7 +98,7 @@ bool CmdNodeRegister::AnyMessage(
     SendTo(pUpstreamChannel, oMsgHead.cmd() + 1, oMsgHead.seq(), oOutMsgBody);
     if (oNodeInfo.Parse(oMsgBody.data()))
     {
-        uint16 unNodeId = m_pSessionNodesHolder->AddNode(oNodeInfo);
+        uint16 unNodeId = m_pSessionOnlineNodes->AddNode(oNodeInfo);
         if (0 == unNodeId)
         {
             oOutMsgBody.mutable_rsp_result()->set_code(neb::ERR_NODE_NUM);

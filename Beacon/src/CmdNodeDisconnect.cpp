@@ -13,7 +13,7 @@ namespace beacon
 {
 
 CmdNodeDisconnect::CmdNodeDisconnect(int32 iCmd)
-    : neb::Cmd(iCmd), m_pSessionNodesHolder(nullptr)
+    : neb::Cmd(iCmd), m_pSessionOnlineNodes(nullptr)
 {
 }
 
@@ -31,10 +31,10 @@ bool CmdNodeDisconnect::AnyMessage(std::shared_ptr<neb::SocketChannel> pUpstream
                 const MsgBody& oMsgBody)
 {
     neb::CJsonObject oNodeInfo;
-    if (nullptr == m_pSessionNodesHolder)
+    if (nullptr == m_pSessionOnlineNodes)
     {
-        m_pSessionNodesHolder = std::dynamic_pointer_cast<SessionNodesHolder>(GetSession(1, "beacon::SessionNodesHolder"));
-        if (nullptr == m_pSessionNodesHolder)
+        m_pSessionOnlineNodes = std::dynamic_pointer_cast<SessionOnlineNodes>(GetSession(1, "beacon::SessionOnlineNodes"));
+        if (nullptr == m_pSessionOnlineNodes)
         {
             LOG4_ERROR("no session node found!");
         }
@@ -42,7 +42,7 @@ bool CmdNodeDisconnect::AnyMessage(std::shared_ptr<neb::SocketChannel> pUpstream
     if (oNodeInfo.Parse(oMsgBody.data()))
     {
         LOG4_DEBUG("%s disconnect, remove from node list.", oMsgBody.data().c_str());
-        m_pSessionNodesHolder->RemoveNode(oMsgBody.data());
+        m_pSessionOnlineNodes->RemoveNode(oMsgBody.data());
     }
     else
     {
