@@ -13,8 +13,8 @@ SYSTEM_LIB_PATH:=/usr/lib64
 else
 SYSTEM_LIB_PATH:=/usr/lib
 endif
-LIB3RD_PATH = ../../../../factory/cplus/NebulaDepend
-NEBULA_PATH = ../../../../factory/cplus/Nebula
+LIB3RD_PATH = ../../../NebulaDepend
+NEBULA_PATH = ../../../Nebula
 INTERFACE_PATH = ..
 
 VPATH = $(INTERFACE_PATH)/src
