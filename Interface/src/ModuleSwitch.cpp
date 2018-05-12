@@ -104,7 +104,7 @@ bool ModuleSwitch::AnyMessage(
                 std::shared_ptr<neb::SocketChannel> pUpstreamChannel,
                 const HttpMsg& oInHttpMsg)
 {
-    std::map<std::string, neb::CJsonObject*>::iterator module_conf_iter = m_mapModuleConf.find(oInHttpMsg.path());
+    auto module_conf_iter = m_mapModuleConf.find(oInHttpMsg.path());
     if (module_conf_iter == m_mapModuleConf.end())
     {
         HttpMsg oOutHttpMsg;

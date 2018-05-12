@@ -15,14 +15,6 @@
 #include <SessionOnlineNodes.hpp>
 #include <util/json/CJsonObject.hpp>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    neb::Cmd* create();
-#ifdef __cplusplus
-}
-#endif
-
 namespace beacon
 {
 

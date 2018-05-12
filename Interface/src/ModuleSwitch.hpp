@@ -10,17 +10,17 @@
 #ifndef SRC_MODULESWITCH_MODULESWITCH_HPP_
 #define SRC_MODULESWITCH_MODULESWITCH_HPP_
 
-#include <actor/cmd/Module.hpp>
 #include <string>
 #include <map>
 #include <Error.hpp>
 #include <util/json/CJsonObject.hpp>
+#include <actor/cmd/Module.hpp>
 #include "StepSwitch.hpp"
 
 namespace inter
 {
 
-class ModuleSwitch: public neb::Module
+class ModuleSwitch: public neb::Module, public neb::DynamicCreator<ModuleSwitch, std::string>
 {
 public:
     ModuleSwitch(const std::string& strModulePath);
@@ -31,12 +31,6 @@ public:
     virtual bool AnyMessage(
                     std::shared_ptr<neb::SocketChannel> pUpstreamChannel,
                     const HttpMsg& oHttpMsg);
-
-    virtual std::string ObjectName() const
-    {
-        return("inter::ModuleSwitch");
-    }
-
 protected:
     void Response(std::shared_ptr<neb::SocketChannel> pUpstreamChannel,
                     const HttpMsg& oInHttpMsg,
