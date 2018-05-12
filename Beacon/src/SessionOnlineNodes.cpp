@@ -51,7 +51,7 @@ void SessionOnlineNodes::AddSubscribe(const std::string& strNodeType, const std:
 
 uint16 SessionOnlineNodes::AddNode(const neb::CJsonObject& oNodeInfo)
 {
-    LOG4_TRACE("%s", __FUNCTION__);
+    LOG4_TRACE("(%s)", oNodeInfo.ToString().c_str());
     uint32 uiNodeId = 0;
     std::unordered_set<uint16>::iterator node_id_iter;
     std::string strNodeIdentify = oNodeInfo("node_ip") + std::string(":") + oNodeInfo("node_port");
@@ -141,7 +141,7 @@ void SessionOnlineNodes::RemoveNode(const std::string& strNodeIdentify)
 
 void SessionOnlineNodes::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
 {
-    LOG4_TRACE("%s", __FUNCTION__);
+    LOG4_TRACE("(%s)", oNodeInfo.ToString().c_str());
     std::unordered_map<std::string, std::unordered_map<std::string, neb::CJsonObject> >::iterator node_list_iter;
     std::unordered_map<std::string, neb::CJsonObject>::iterator node_iter;
     std::unordered_set<std::string>::iterator node_type_iter;
@@ -176,8 +176,11 @@ void SessionOnlineNodes::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
 
                             MsgBody oMsgBody;
                             oMsgBody.set_data(oAddNodes.ToString());
-                            std::shared_ptr<neb::Step> pStep = MakeSharedStep("neb::StepNodeBroadcast", node_iter->first, neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
-                            pStep->Emit();
+                            std::shared_ptr<neb::Step> pStep = MakeSharedStep("beacon::StepNodeBroadcast", node_iter->first, (int32)neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
+                            if (nullptr != pStep)
+                            {
+                                pStep->Emit();
+                            }
                         }
                     }
                     catch(std::bad_alloc& e)
@@ -216,8 +219,11 @@ void SessionOnlineNodes::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
             oMsgBody.set_data(oSubcribeNodeInfo.ToString());
             snprintf(szThisNodeIdentity, sizeof(szThisNodeIdentity),
                             "%s:%s", oNodeInfo("node_ip").c_str(), oNodeInfo("node_port").c_str());
-            std::shared_ptr<neb::Step> pStep = MakeSharedStep("neb::StepNodeBroadcast", std::string(szThisNodeIdentity), neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
-            pStep->Emit();
+            std::shared_ptr<neb::Step> pStep = MakeSharedStep("beacon::StepNodeBroadcast", std::string(szThisNodeIdentity), (int32)neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
+            if (nullptr != pStep)
+            {
+                pStep->Emit();
+            }
         }
         catch(std::bad_alloc& e)
         {
@@ -228,7 +234,7 @@ void SessionOnlineNodes::AddNodeBroadcast(const neb::CJsonObject& oNodeInfo)
 
 void SessionOnlineNodes::RemoveNodeBroadcast(const neb::CJsonObject& oNodeInfo)
 {
-    LOG4_TRACE("%s", __FUNCTION__);
+    LOG4_TRACE("(%s)", oNodeInfo.ToString().c_str());
     std::unordered_map<std::string, std::unordered_map<std::string, neb::CJsonObject> >::iterator node_list_iter;
     std::unordered_map<std::string, neb::CJsonObject>::iterator node_iter;
     std::unordered_set<std::string>::iterator node_type_iter;
@@ -253,8 +259,11 @@ void SessionOnlineNodes::RemoveNodeBroadcast(const neb::CJsonObject& oNodeInfo)
                     {
                         MsgBody oMsgBody;
                         oMsgBody.set_data(oDelNodes.ToString());
-                        std::shared_ptr<neb::Step> pStep = MakeSharedStep("neb::StepNodeBroadcast", node_iter->first, neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
-                        pStep->Emit();
+                        std::shared_ptr<neb::Step> pStep = MakeSharedStep("beacon::StepNodeBroadcast", node_iter->first, (int32)neb::CMD_REQ_NODE_REG_NOTICE, oMsgBody);
+                        if (nullptr != pStep)
+                        {
+                            pStep->Emit();
+                        }
                     }
                 }
             }

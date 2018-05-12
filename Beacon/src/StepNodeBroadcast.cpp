@@ -12,8 +12,8 @@
 namespace beacon
 {
 
-StepNodeBroadcast::StepNodeBroadcast(const std::string& strNodeIdentity, uint32 uiCmd, const MsgBody& oMsgBody)
-    : m_strTargetNodeIdentity(strNodeIdentity), m_uiCmd(uiCmd), m_oMsgBody(oMsgBody)
+StepNodeBroadcast::StepNodeBroadcast(const std::string& strNodeIdentity, int32 iCmd, const MsgBody& oMsgBody)
+    : m_strTargetNodeIdentity(strNodeIdentity), m_iCmd(iCmd), m_oMsgBody(oMsgBody)
 {
 }
 
@@ -23,7 +23,7 @@ StepNodeBroadcast::~StepNodeBroadcast()
 
 neb::E_CMD_STATUS StepNodeBroadcast::Emit(int iErrno, const std::string& strErrMsg, void* data)
 {
-    if (SendTo(m_strTargetNodeIdentity, m_uiCmd, GetSequence(), m_oMsgBody))
+    if (SendTo(m_strTargetNodeIdentity, m_iCmd, GetSequence(), m_oMsgBody))
     {
         return(neb::CMD_STATUS_RUNNING);
     }

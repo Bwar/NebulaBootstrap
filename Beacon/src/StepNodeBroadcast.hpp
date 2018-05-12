@@ -15,11 +15,11 @@
 namespace beacon
 {
 
-class StepNodeBroadcast: public neb::PbStep, public neb::DynamicCreator<StepNodeBroadcast, std::string, uint32, MsgBody>
+class StepNodeBroadcast: public neb::PbStep, public neb::DynamicCreator<StepNodeBroadcast, std::string, int32, MsgBody>
 {
 public:
 public:
-    StepNodeBroadcast(const std::string& strNodeIdentity, uint32 uiCmd, const MsgBody& oMsgBody);
+    StepNodeBroadcast(const std::string& strNodeIdentity, int32 iCmd, const MsgBody& oMsgBody);
     virtual ~StepNodeBroadcast();
 
     virtual neb::E_CMD_STATUS Emit(
@@ -37,7 +37,7 @@ public:
 
 private:
     std::string m_strTargetNodeIdentity;
-    uint32 m_uiCmd;
+    int32 m_iCmd;
     MsgBody m_oMsgBody;
 };
 
