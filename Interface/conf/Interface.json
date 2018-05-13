@@ -45,7 +45,12 @@
     },
     "//refresh_interval":"刷新Server配置，检查、加载插件动态库时间周期（周期时间长短视服务器忙闲而定）",
     "refresh_interval":60,    
-    "dynamic_loading":[],
+    "dynamic_loading":[],    
+    "//permission":"限制。addr_permit为连接限制，限制每个IP在统计时间内连接次数；uin_permit为消息数量限制，限制每个用户在单位统计时间内发送消息数量。",
+    "permission":{
+        "addr_permit":{"stat_interval":60.0, "permit_num":10},
+        "uin_permit":{"stat_interval":60.0, "permit_num":60}
+    },
     "//custom":"自定义配置，用于通过框架层带给业务",
     "custom":{
     }
