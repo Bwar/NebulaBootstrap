@@ -14,6 +14,7 @@ English | [中文](/README_cn.md)
 ## Overview 
 
 NebulaBootstrap provides service for developers to quickly build a distributed systems (including configuration management, service discovery, routing, load balancing, leadership election, distributed sessions, cluster state and so on). 
+![nebula_cluster](image/nebula_cluster.png)
 
 <a name="License"></a>
 ## License 

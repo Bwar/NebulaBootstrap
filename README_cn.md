@@ -15,6 +15,8 @@
 
 NebulaBootstrap是为开发人员提供快速构建分布式系统（包括配置管理，服务发现，路由，负载平衡，领导选举，分布式会话，集群状态等）的服务解决方案。
 
+![nebula_cluster](image/nebula_cluster.png)
+
 <a name="License"></a>
 ## 许可证
 > Copyright（c）2018 Bwar
