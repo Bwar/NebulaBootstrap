@@ -52,6 +52,57 @@ MIT License
    4. $ cd NebulaAccess/src;    $ make
    5. $ cd NebulaLogic/src;    $ make
 
+    # my work path was "/home/bwar/factory"
+    mkdir BuildNebula
+    cd BuildNebula
+     
+    # build nebula depend
+    mkdir NebulaDepend NebulaDependBuild
+    cd NebulaDependBuild
+    
+    git clone https://github.com/google/protobuf.git protobuf
+    cd protobuf
+    ./autogen.sh
+    ./configure --prefix=/home/bwar/factory/BuildNebula/NebulaDepend
+    make
+    make install
+    cd ..
+    
+    git clone https://github.com/kindy/libev.git libev
+    cd libev/src
+    chmod u+x autogen.sh
+    ./autogen.sh
+    ./configure --prefix=/home/bwar/factory/BuildNebula/NebulaDepend
+    make
+    make install
+    cd ../../
+    
+    git clone https://github.com/redis/hiredis.git hiredis
+    cd hiredis
+    make
+    mkdir ../../NebulaDepend/include/hiredis
+    cp -r adapters *.h ../../NebulaDepend/include/hiredis/
+    cp libhiredis.so ../../NebulaDepend/lib/
+    cd ..
+    
+    wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_6_0_0.tar.gz
+    tar -zxvf CRYPTOPP_6_0_0.tar.gz
+    cd cryptopp-CRYPTOPP_6_0_0
+    make libcryptopp.so
+    mkdir ../../NebulaDepend/include/cryptopp
+    cp *.h ../../NebulaDepend/include/cryptopp/
+    cp libcryptopp.so ../../NebulaDepend/lib/
+    cd ..
+    
+    # build nebula
+    cd ..
+    git clone https://github.com/Bwar/Nebula.git Nebula
+    cd Nebula/proto
+    /home/bwar/factory/BuildNebula/NebulaDepend/bin/protoc *.proto --cpp_out=../src/pb
+    cd ../src
+    make
+
+
 <a name="Documentation"></a>
 ## Documentation 
    The complete documentation for NebulaBootstrap is coming...
