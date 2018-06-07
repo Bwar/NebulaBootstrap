@@ -29,7 +29,6 @@ NebulaBootstrap是为开发人员提供快速构建分布式系统（包括配�
 <a name="Building"></a>
 ## 编译
 Nebula在centos6.5（需升级binutils到2.22之后版本）和centos7.4上用gcc6.4编译通过。
-![nebula_build_dir](docs/image/build_dir.png)
 
 编译步骤：
   1. $ mkdir NebulaDepend
