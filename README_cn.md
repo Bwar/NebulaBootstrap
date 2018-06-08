@@ -79,6 +79,8 @@ Nebula在centos6.5（需升级binutils到2.22之后版本）和centos7.4上用gc
     # build nebula
     cd ..
     git clone https://github.com/Bwar/Nebula.git Nebula
+    mkdir Nebula/include
+    mkdir Nebula/lib
     cd Nebula/proto
     /home/bwar/factory/BuildNebula/NebulaDepend/bin/protoc *.proto --cpp_out=../src/pb
     cd ../src

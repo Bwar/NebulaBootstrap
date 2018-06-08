@@ -97,6 +97,8 @@ MIT License
     # build nebula
     cd ..
     git clone https://github.com/Bwar/Nebula.git Nebula
+    mkdir Nebula/include
+    mkdir Nebula/lib
     cd Nebula/proto
     /home/bwar/factory/BuildNebula/NebulaDepend/bin/protoc *.proto --cpp_out=../src/pb
     cd ../src
