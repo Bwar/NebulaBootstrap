@@ -1,0 +1,47 @@
+{
+    "node_type":"BEACON",
+    "host":"192.168.157.133",
+    "port":16000,
+    "server_name":"neb_Beacon",
+    "process_num":1,
+    "worker_capacity":1000000,
+    "config_path":"conf/",
+    "log_path":"log/",
+    "max_log_file_num":5,
+    "max_log_file_size":20480000,
+    "io_timeout":300.0,
+    "step_timeout":2.5,
+    "log_levels":{"FATAL":50000, "ERROR":40000, "WARN":30000, "INFO":20000, "DEBUG":10000, "TRACE":0},
+    "log_level":0,
+    "refresh_interval":60,
+    "cmd":[
+        {"cmd":11, "so_path":"plugins/beacon/CmdNodeReport.so", "entrance_symbol":"create", "load":true, "version":1},
+        {"cmd":13, "so_path":"plugins/beacon/CmdNodeRegister.so", "entrance_symbol":"create", "load":true, "version":1},
+        {"cmd":19, "so_path":"plugins/beacon/CmdNodeDisconnect.so", "entrance_symbol":"create", "load":true, "version":1}
+    ],
+    "module":[],
+    "custom":{
+        "config_choice":"local_config",
+        "db_config":{
+            "host":"192.168.157.133",
+            "port":3306,
+            "db_name":"db_beacon",
+            "user":"neb_beacon",
+            "password":"That's a cat!",
+            "charset":"utf8"
+        },
+        "local_config":{
+		    "ipwhite":["127.0.0.1", "192.168.157.133"],
+		    "node_type":[
+		        {"level":0, "node_type":"BEACON", "subscribe":[]},
+		        {"level":1, "node_type":"ACCESS", "subscribe":["LOGIC"]},
+		        {"level":2, "node_type":"LOGIC", "subscribe":["LOGIC", "STORAGE"]},
+		        {"level":3, "node_type":"STORAGE", "subscribe":["DBAGENT_W", "DBAGENT_R"]},
+		        {"level":4, "node_type":"DBAGENT_W", "subscribe":[]},
+		        {"level":4, "node_type":"DBAGENT_R", "subscribe":[]},
+		        {"level":1, "node_type":"INTERFACE", "subscribe":["LOGIC", "STORAGE"]},
+		        {"level":1, "node_type":"ENTRANCE", "subscribe":["LOGIC", "STORAGE"]}
+		    ]
+	    }
+    }
+}
