@@ -48,9 +48,7 @@ then
             #JSON.put /host $bind_ip_address json_tree 
             #JSON.dump json_tree > ${neb_bin}.json
             original_host=$(JSON.get /host json_tree)
-            sed "s/$original_host/\"$bind_ip_address\"/g" ${NEB_CONF}/${neb_bin}.json
-            #sed "s/\"host\": $original_host,/\"host\": \"$bind_ip_address\",/" ${NEB_CONF}/${neb_bin}.json
-            #sed "s/\"host\":$original_host,/\"host\":\"$bind_ip_address\",/" ${NEB_CONF}/${neb_bin}.json
+            sed -i "s/$original_host/\"$bind_ip_address\"/g" ${NEB_CONF}/${neb_bin}.json
             server_conf_list="$server_conf_list ${neb_bin}.json"
         fi
     done
@@ -68,11 +66,10 @@ do
         #JSON.put /host $bind_ip_address json_tree >> /dev/null 2>&1
         #JSON.dump json_tree > ${neb_bin}.json
         original_host=$(JSON.get /host json_tree)
-        sed "s/$original_host/\"$bind_ip_address\"/g" ${NEB_CONF}/${neb_bin}.json
-        #sed "s/\"host\": $original_host,/\"host\": \"$bind_ip_address\",/" ${NEB_CONF}/${neb_bin}.json
-        #sed "s/\"host\":$original_host,/\"host\":\"$bind_ip_address\",/" ${NEB_CONF}/${neb_bin}.json
+        sed -i "s/$original_host/\"$bind_ip_address\"/g" ${NEB_CONF}/${neb_bin}.json
         server_conf_list="$server_conf_list ${neb_bin}.json"
     fi
 done
 echo "the \"host\" field in \"$server_conf_list\" had been changed."
+echo "Successful."
 

@@ -50,8 +50,8 @@ then
     echo "cancel"
     exit 0
 fi
-neb_servre_bin_files=`ls ${NEB_BIN}/`
-for neb_bin in $neb_servre_bin_files
+neb_server_bin_files=`ls ${NEB_BIN}/`
+for neb_bin in $neb_server_bin_files
 do
     if [ -f "${NEB_CONF}/${neb_bin}.json" ]
     then
