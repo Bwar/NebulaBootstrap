@@ -67,9 +67,18 @@ else                # deploy remote
     cp *.h ../../NebulaDepend/include/cryptopp/
     cp libcryptopp.so ../../NebulaDepend/lib/
     cd ..
+    cd ..
+
+    # copy libs to deploy path
+    cd NebulaDepend/lib
+    tar -zcvf neb_depend.tar.gz lib* pkgconfig
+    mv neb_depend.tar.gz ${DEPLOY_PATH}/lib/
+    cd ${DEPLOY_PATH}/lib
+    tar -zxvf neb_depend.tar.gz
+    rm neb_depend.tar.gz
 
     # now download Nebula and NebulaBootstrap
-    cd ..
+    cd ${DEPLOY_PATH}/temp/build
     git clone https://github.com/Bwar/Nebula.git Nebula
     mkdir Nebula/include
     mkdir Nebula/lib
