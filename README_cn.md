@@ -30,61 +30,15 @@ NebulaBootstrap是为开发人员提供快速构建分布式系统（包括配�
 ## 编译
 Nebula在centos6.5（需升级binutils到2.22之后版本）和centos7.4上用gcc6.4编译通过。
 
-编译步骤：
-  1. $ mkdir NebulaDepend
-  2. 下载[依赖](#DependOn)并编译，编译完成后拷贝共享库到NebulaDepend/lib，拷贝头文件的文件夹到NebulaDepend/include。
-  3. $ cd Nebula/src; $ make
-    # my work path was "/home/bwar/factory"
-    mkdir BuildNebula
-    cd BuildNebula
-     
-    # build nebula depend
-    mkdir NebulaDepend NebulaDependBuild
-    cd NebulaDependBuild
-    
-    git clone https://github.com/google/protobuf.git protobuf
-    cd protobuf
-    ./autogen.sh
-    ./configure --prefix=/home/bwar/factory/BuildNebula/NebulaDepend
-    make
-    make install
-    cd ..
-    
-    git clone https://github.com/kindy/libev.git libev
-    cd libev/src
-    chmod u+x autogen.sh
-    ./autogen.sh
-    ./configure --prefix=/home/bwar/factory/BuildNebula/NebulaDepend
-    make
-    make install
-    cd ../../
-    
-    git clone https://github.com/redis/hiredis.git hiredis
-    cd hiredis
-    make
-    mkdir ../../NebulaDepend/include/hiredis
-    cp -r adapters *.h ../../NebulaDepend/include/hiredis/
-    cp libhiredis.so ../../NebulaDepend/lib/
-    cd ..
-    
-    wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_6_0_0.tar.gz
-    tar -zxvf CRYPTOPP_6_0_0.tar.gz
-    cd cryptopp-CRYPTOPP_6_0_0
-    make libcryptopp.so
-    mkdir ../../NebulaDepend/include/cryptopp
-    cp *.h ../../NebulaDepend/include/cryptopp/
-    cp libcryptopp.so ../../NebulaDepend/lib/
-    cd ..
-    
-    # build nebula
-    cd ..
-    git clone https://github.com/Bwar/Nebula.git Nebula
-    mkdir Nebula/include
-    mkdir Nebula/lib
-    cd Nebula/proto
-    /home/bwar/factory/BuildNebula/NebulaDepend/bin/protoc *.proto --cpp_out=../src/pb
-    cd ../src
-    make
+自动构建和部署步骤：
+   1. git clone https://github.com/Bwar/NebulaBootstrap.git NebulaBootstrap
+   2. cd NebulaBootstrap
+   3. chmod u+x deploy.sh
+   4. ./deploy.sh
+                  
+然后，启动服务集群：
+   1. ./configure.sh
+   2. ./startup.sh
 
 <a name="Documentation"></a>
 ## 文档

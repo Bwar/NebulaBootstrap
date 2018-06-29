@@ -4,7 +4,7 @@ English | [中文](/README_cn.md)    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 
 1. [Overview](#Overview)
 2. [License](#License)
-3. [Building](#Building)
+3. [Getting start](#GettingStart)
 4. [Documentation](#Documentation)
 5. [Depend on](#DependOn)
 6. [Todo list](#TODO)
@@ -41,69 +41,20 @@ MIT License
 >  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 >  THE SOFTWARE.
 
-<a name="Building"></a>
-## Building 
+<a name="GettingStart"></a>
+## Getting start
    NebulaBootstrap was consist of [NebulaBeacon](https://github.com/Bwar/NebulaBeacon), [NebulaInterface](https://github.com/Bwar/NebulaHttp), [NebulaAccess](https://github.com/Bwar/NebulaAccess), [NebulaLogic](https://github.com/Bwar/NebulaLogic), NebulaMydis, NebulaDbAgent and [NebulaLogger](https://github.com/Bwar/NebulaLogger), and they were builded passing with gcc6.4 on centos6.5(upgrade binutils to 2.22 or later) and centos7.4.  
+   NebulaBootstrap provides automate building and deploying.
    
-  build step：
-   1. $ mkdir NebulaDepend
-   2. go to [Depend on](#DependOn), download and compile these dependent libraries, copy the shared library files to NebulaDepend/lib, copy the header files directory to NebulaDepend/include.
-   3. $ cd NebulaBeacon/src;    $ make
-   4. $ cd NebulaAccess/src;    $ make
-   5. $ cd NebulaLogic/src;    $ make
-
-    # my work path was "/home/bwar/factory"
-    mkdir BuildNebula
-    cd BuildNebula
-     
-    # build nebula depend
-    mkdir NebulaDepend NebulaDependBuild
-    cd NebulaDependBuild
-    
-    git clone https://github.com/google/protobuf.git protobuf
-    cd protobuf
-    ./autogen.sh
-    ./configure --prefix=/home/bwar/factory/BuildNebula/NebulaDepend
-    make
-    make install
-    cd ..
-    
-    git clone https://github.com/kindy/libev.git libev
-    cd libev/src
-    chmod u+x autogen.sh
-    ./autogen.sh
-    ./configure --prefix=/home/bwar/factory/BuildNebula/NebulaDepend
-    make
-    make install
-    cd ../../
-    
-    git clone https://github.com/redis/hiredis.git hiredis
-    cd hiredis
-    make
-    mkdir ../../NebulaDepend/include/hiredis
-    cp -r adapters *.h ../../NebulaDepend/include/hiredis/
-    cp libhiredis.so ../../NebulaDepend/lib/
-    cd ..
-    
-    wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_6_0_0.tar.gz
-    tar -zxvf CRYPTOPP_6_0_0.tar.gz
-    cd cryptopp-CRYPTOPP_6_0_0
-    make libcryptopp.so
-    mkdir ../../NebulaDepend/include/cryptopp
-    cp *.h ../../NebulaDepend/include/cryptopp/
-    cp libcryptopp.so ../../NebulaDepend/lib/
-    cd ..
-    
-    # build nebula
-    cd ..
-    git clone https://github.com/Bwar/Nebula.git Nebula
-    mkdir Nebula/include
-    mkdir Nebula/lib
-    cd Nebula/proto
-    /home/bwar/factory/BuildNebula/NebulaDepend/bin/protoc *.proto --cpp_out=../src/pb
-    cd ../src
-    make
-
+   automate building and deploying follow these step：
+   1. git clone https://github.com/Bwar/NebulaBootstrap.git NebulaBootstrap
+   2. cd NebulaBootstrap
+   3. chmod u+x deploy.sh
+   4. ./deploy.sh
+   
+   then bootstrap:
+   1. ./configure.sh
+   2. ./startup.sh
 
 <a name="Documentation"></a>
 ## Documentation 

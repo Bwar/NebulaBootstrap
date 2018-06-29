@@ -31,46 +31,43 @@ then
     echo "do you want to replace all the config files with the original config files in build path? [yes | no]"
     read replace_config
 else                # deploy remote
-    cd ${DEPLOY_PATH}/temp/build
-    export WORK_PATH=`pwd`
+    cd ${BUILD_PATH}
     mkdir NebulaDepend NebulaDependBuild
-    cd NebulaDependBuild
+    cd ${BUILD_PATH}/NebulaDependBuild
     git clone https://github.com/google/protobuf.git protobuf
     cd protobuf
     chmod u+x autogen.sh
     chmod u+x configure 
     ./autogen.sh
-    ./configure --prefix=${WORK_PATH}/NebulaDepend
+    ./configure --prefix=${BUILD_PATH}/NebulaDepend
     make
     make install
-    cd ..
+    cd ${BUILD_PATH}/NebulaDependBuild
     git clone https://github.com/kindy/libev.git libev
     cd libev/src
     chmod u+x autogen.sh
     ./autogen.sh
-    ./configure --prefix=${WORK_PATH}/NebulaDepend
+    ./configure --prefix=${BUILD_PATH}/NebulaDepend
     make
     make install
-    cd ../../
+    cd ${BUILD_PATH}/NebulaDependBuild
     git clone https://github.com/redis/hiredis.git hiredis
     cd hiredis
     make
-    mkdir ../../NebulaDepend/include/hiredis
+    mkdir -p ../../NebulaDepend/include/hiredis
     cp -r adapters *.h ../../NebulaDepend/include/hiredis/
     cp libhiredis.so ../../NebulaDepend/lib/
-    cd ..
+    cd ${BUILD_PATH}/NebulaDependBuild
     wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_6_0_0.tar.gz
     tar -zxvf CRYPTOPP_6_0_0.tar.gz
     cd cryptopp-CRYPTOPP_6_0_0
     make libcryptopp.so
-    mkdir ../../NebulaDepend/include/cryptopp
+    mkdir -p ../../NebulaDepend/include/cryptopp
     cp *.h ../../NebulaDepend/include/cryptopp/
     cp libcryptopp.so ../../NebulaDepend/lib/
-    cd ..
-    cd ..
 
     # copy libs to deploy path
-    cd NebulaDepend/lib
+    cd ${BUILD_PATH}/NebulaDepend/lib
     tar -zcvf neb_depend.tar.gz lib* pkgconfig
     mv neb_depend.tar.gz ${DEPLOY_PATH}/lib/
     cd ${DEPLOY_PATH}/lib
@@ -78,17 +75,17 @@ else                # deploy remote
     rm neb_depend.tar.gz
 
     # now download Nebula and NebulaBootstrap
-    cd ${DEPLOY_PATH}/temp/build
-    git clone https://github.com/Bwar/Nebula.git Nebula
+    cd ${BUILD_PATH}
+    git clone https://github.com/Bwar/Nebula.git ${BUILD_PATH}/Nebula
     mkdir Nebula/include
     mkdir Nebula/lib
     cd Nebula/proto
-    ${WORK_PATH}/NebulaDepend/bin/protoc *.proto --cpp_out=../src/pb
-    cd ../../
+    ${BUILD_PATH}/NebulaDepend/bin/protoc *.proto --cpp_out=../src/pb
 
+    cd ${BUILD_PATH}
     for server in $NEBULA_BOOTSTRAP
     do
-        git clone https://github.com/Bwar/${server}.git ${server}
+        git clone https://github.com/Bwar/${server}.git ${BUILD_PATH}/${server}
     done
 fi
 
