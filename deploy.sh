@@ -3,7 +3,7 @@
 DEPLOY_PATH="."
 cd $DEPLOY_PATH
 DEPLOY_PATH=`pwd`
-BUILD_PATH="${DEPLOY_PATH}/temp/build"
+BUILD_PATH="${DEPLOY_PATH}/build"
 NEBULA_BOOTSTRAP="NebulaBeacon NebulaInterface NebulaLogic"
 chmod u+x *.sh
 
@@ -14,7 +14,8 @@ mkdir -p ${DEPLOY_PATH}/log >> /dev/null 2>&1
 mkdir -p ${DEPLOY_PATH}/data >> /dev/null 2>&1
 mkdir -p ${DEPLOY_PATH}/plugins/logic >> /dev/null 2>&1
 mkdir -p ${DEPLOY_PATH}/conf/ssl >> /dev/null 2>&1
-mkdir -p ${DEPLOY_PATH}/temp/build >> /dev/null 2>&1
+mkdir -p ${DEPLOY_PATH}/temp >> /dev/null 2>&1
+mkdir -p ${DEPLOY_PATH}/build >> /dev/null 2>&1
 
 replace_config="no"
 bin_file_num=`ls -l ${DEPLOY_PATH}/bin | wc -l`
@@ -32,12 +33,13 @@ then
     read replace_config
 else                # deploy remote
     cd ${BUILD_PATH}
-    mkdir NebulaDepend NebulaDependBuild
+    mkdir NebulaDepend lib_build
 
     # install protobuf
-    cd ${BUILD_PATH}/NebulaDependBuild
+    cd ${BUILD_PATH}/lib_build
     wget https://github.com/google/protobuf/archive/v3.6.0.zip
     unzip v3.6.0.zip
+    rm v3.6.0.zip >> /dev/null 2>&1
     cd protobuf-3.6.0
     chmod u+x autogen.sh
     chmod u+x configure 
@@ -47,7 +49,7 @@ else                # deploy remote
     make install
 
     # install libev
-    cd ${BUILD_PATH}/NebulaDependBuild
+    cd ${BUILD_PATH}/lib_build
     git clone https://github.com/kindy/libev.git libev
     cd libev/src
     chmod u+x autogen.sh
@@ -57,7 +59,7 @@ else                # deploy remote
     make install
 
     # install hiredis
-    cd ${BUILD_PATH}/NebulaDependBuild
+    cd ${BUILD_PATH}/lib_build
     git clone https://github.com/redis/hiredis.git hiredis
     cd hiredis
     make
@@ -66,18 +68,20 @@ else                # deploy remote
     cp libhiredis.so ../../NebulaDepend/lib/
 
     # install openssl
-    cd ${BUILD_PATH}/NebulaDependBuild
+    cd ${BUILD_PATH}/lib_build
     wget https://github.com/openssl/openssl/archive/OpenSSL_1_1_0.zip
     unzip OpenSSL_1_1_0.zip
+    rm OpenSSL_1_1_0.zip >> /dev/null 2>&1
     cd openssl-OpenSSL_1_1_0
     ./config --prefix=${BUILD_PATH}/NebulaDepend
     make
     make install
 
     # install crypto++
-    cd ${BUILD_PATH}/NebulaDependBuild
+    cd ${BUILD_PATH}/lib_build
     wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_6_0_0.tar.gz
     tar -zxvf CRYPTOPP_6_0_0.tar.gz
+    rm CRYPTOPP_6_0_0.tar.gz
     cd cryptopp-CRYPTOPP_6_0_0
     make libcryptopp.so
     mkdir -p ../../NebulaDepend/include/cryptopp
@@ -86,7 +90,7 @@ else                # deploy remote
 
     # copy libs to deploy path
     cd ${BUILD_PATH}/NebulaDepend/lib
-    tar -zcvf neb_depend.tar.gz lib* pkgconfig
+    tar -zcvf neb_depend.tar.gz lib* pkgconfig engines-1.1
     mv neb_depend.tar.gz ${DEPLOY_PATH}/lib/
     cd ${DEPLOY_PATH}/lib
     tar -zxvf neb_depend.tar.gz
