@@ -33,15 +33,20 @@ then
 else                # deploy remote
     cd ${BUILD_PATH}
     mkdir NebulaDepend NebulaDependBuild
+
+    # install protobuf
     cd ${BUILD_PATH}/NebulaDependBuild
-    git clone https://github.com/google/protobuf.git protobuf
-    cd protobuf
+    wget https://github.com/google/protobuf/archive/v3.6.0.zip
+    unzip v3.6.0.zip
+    cd protobuf-3.6.0
     chmod u+x autogen.sh
     chmod u+x configure 
     ./autogen.sh
     ./configure --prefix=${BUILD_PATH}/NebulaDepend
     make
     make install
+
+    # install libev
     cd ${BUILD_PATH}/NebulaDependBuild
     git clone https://github.com/kindy/libev.git libev
     cd libev/src
@@ -50,6 +55,8 @@ else                # deploy remote
     ./configure --prefix=${BUILD_PATH}/NebulaDepend
     make
     make install
+
+    # install hiredis
     cd ${BUILD_PATH}/NebulaDependBuild
     git clone https://github.com/redis/hiredis.git hiredis
     cd hiredis
@@ -57,6 +64,17 @@ else                # deploy remote
     mkdir -p ../../NebulaDepend/include/hiredis
     cp -r adapters *.h ../../NebulaDepend/include/hiredis/
     cp libhiredis.so ../../NebulaDepend/lib/
+
+    # install openssl
+    cd ${BUILD_PATH}/NebulaDependBuild
+    wget https://github.com/openssl/openssl/archive/OpenSSL_1_1_0.zip
+    unzip OpenSSL_1_1_0.zip
+    cd openssl-OpenSSL_1_1_0
+    ./config --prefix=${BUILD_PATH}/NebulaDepend
+    make
+    make install
+
+    # install crypto++
     cd ${BUILD_PATH}/NebulaDependBuild
     wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_6_0_0.tar.gz
     tar -zxvf CRYPTOPP_6_0_0.tar.gz
