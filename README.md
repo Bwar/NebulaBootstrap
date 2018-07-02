@@ -47,10 +47,11 @@ MIT License
    NebulaBootstrap provides automate building and deploying.
    
    automate building and deploying follow these step：
-   1. git clone https://github.com/Bwar/NebulaBootstrap.git NebulaBootstrap
-   2. cd NebulaBootstrap
-   3. chmod u+x deploy.sh
-   4. ./deploy.sh
+   1. wget https://github.com/Bwar/NebulaBootstrap/archive/master.zip
+   2. unzip master.zip; rm master.zip; mv NebulaBootstrap-master NebulaBootstrap
+   3. cd NebulaBootstrap
+   4. chmod u+x deploy.sh
+   5. ./deploy.sh
    
    then bootstrap:
    1. ./configure.sh

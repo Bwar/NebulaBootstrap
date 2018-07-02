@@ -98,7 +98,10 @@ else                # deploy remote
 
     # now download Nebula and NebulaBootstrap
     cd ${BUILD_PATH}
-    git clone https://github.com/Bwar/Nebula.git ${BUILD_PATH}/Nebula
+    wget https://github.com/Bwar/Nebula/archive/master.zip
+    unzip master.zip
+    rm master.zip
+    mv Nebula-master Nebula
     mkdir Nebula/include
     mkdir Nebula/lib
     cd Nebula/proto
@@ -107,7 +110,10 @@ else                # deploy remote
     cd ${BUILD_PATH}
     for server in $NEBULA_BOOTSTRAP
     do
-        git clone https://github.com/Bwar/${server}.git ${BUILD_PATH}/${server}
+        wget https://github.com/Bwar/${server}/archive/master.zip 
+        unzip master.zip
+        rm master.zip
+        mv ${server}-master ${server}
     done
 fi
 

@@ -31,10 +31,11 @@ NebulaBootstrap是为开发人员提供快速构建分布式系统（包括配�
 Nebula在centos6.5（需升级binutils到2.22之后版本）和centos7.4上用gcc6.4编译通过。
 
 自动构建和部署步骤：
-   1. git clone https://github.com/Bwar/NebulaBootstrap.git NebulaBootstrap
-   2. cd NebulaBootstrap
-   3. chmod u+x deploy.sh
-   4. ./deploy.sh
+   1. wget https://github.com/Bwar/NebulaBootstrap/archive/master.zip
+   2. unzip master.zip; rm master.zip; mv NebulaBootstrap-master NebulaBootstrap
+   3. cd NebulaBootstrap
+   4. chmod u+x deploy.sh
+   5. ./deploy.sh
                   
 然后，启动服务集群：
    1. ./configure.sh
