@@ -84,6 +84,7 @@ else                # deploy remote
     then
         wget https://github.com/redis/hiredis/archive/v0.13.0.zip
         unzip v0.13.0.zip
+        rm v0.13.0.zip
         mv hiredis-0.13.0 hiredis
     fi
     cd hiredis
