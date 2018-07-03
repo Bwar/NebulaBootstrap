@@ -17,9 +17,18 @@ mkdir -p ${DEPLOY_PATH}/conf/ssl >> /dev/null 2>&1
 mkdir -p ${DEPLOY_PATH}/temp >> /dev/null 2>&1
 mkdir -p ${DEPLOY_PATH}/build >> /dev/null 2>&1
 
+deploy_without_download="no"
+if [ $# -gt 0 ]
+then
+    if [ "$1" = "--without-download" ]
+    then
+        deploy_without_download="yes"
+    fi
+fi
+
 replace_config="no"
 build_dir_num=`ls -l ${DEPLOY_PATH}/build | wc -l`
-if [ $build_dir_num -gt 3 ]            # deploy local
+if [ $build_dir_num -gt 3 -a "$deploy_without_download" = "no" ]            # deploy local
 then
     echo "please input the build path[\"enter\" when using default build path]:"
     read build_path
@@ -32,13 +41,19 @@ then
     read replace_config
 else                # deploy remote
     cd ${BUILD_PATH}
-    mkdir NebulaDepend lib_build
+    if [ "$deploy_without_download" = "no" ]
+    then
+        mkdir NebulaDepend lib_build
+    fi
 
     # install protobuf
     cd ${BUILD_PATH}/lib_build
-    wget https://github.com/google/protobuf/archive/v3.6.0.zip
-    unzip v3.6.0.zip
-    rm v3.6.0.zip >> /dev/null 2>&1
+    if [ "$deploy_without_download" = "no" ]
+    then
+        wget https://github.com/google/protobuf/archive/v3.6.0.zip
+        unzip v3.6.0.zip
+        rm v3.6.0.zip >> /dev/null 2>&1
+    fi
     cd protobuf-3.6.0
     chmod u+x autogen.sh
     chmod u+x configure 
@@ -49,10 +64,13 @@ else                # deploy remote
 
     # install libev
     cd ${BUILD_PATH}/lib_build
-    wget https://github.com/kindy/libev/archive/master.zip
-    unzip master.zip
-    rm master.zip
-    mv libev-master libev
+    if [ "$deploy_without_download" = "no" ]
+    then
+        wget https://github.com/kindy/libev/archive/master.zip
+        unzip master.zip
+        rm master.zip
+        mv libev-master libev
+    fi
     cd libev/src
     chmod u+x autogen.sh
     ./autogen.sh
@@ -62,9 +80,12 @@ else                # deploy remote
 
     # install hiredis
     cd ${BUILD_PATH}/lib_build
-    wget https://github.com/redis/hiredis/archive/v0.13.0.zip
-    unzip v0.13.0.zip
-    mv hiredis-0.13.0 hiredis
+    if [ "$deploy_without_download" = "no" ]
+    then
+        wget https://github.com/redis/hiredis/archive/v0.13.0.zip
+        unzip v0.13.0.zip
+        mv hiredis-0.13.0 hiredis
+    fi
     cd hiredis
     make
     mkdir -p ../../NebulaDepend/include/hiredis
@@ -78,9 +99,12 @@ else                # deploy remote
         echo "ssl had been installed."
     else
         cd ${BUILD_PATH}/lib_build
-        wget https://github.com/openssl/openssl/archive/OpenSSL_1_1_0.zip
-        unzip OpenSSL_1_1_0.zip
-        rm OpenSSL_1_1_0.zip >> /dev/null 2>&1
+        if [ "$deploy_without_download" = "no" ]
+        then
+            wget https://github.com/openssl/openssl/archive/OpenSSL_1_1_0.zip
+            unzip OpenSSL_1_1_0.zip
+            rm OpenSSL_1_1_0.zip >> /dev/null 2>&1
+        fi
         cd openssl-OpenSSL_1_1_0
         ./config --prefix=${BUILD_PATH}/NebulaDepend
         make
@@ -89,9 +113,12 @@ else                # deploy remote
 
     # install crypto++
     cd ${BUILD_PATH}/lib_build
-    wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_6_0_0.tar.gz
-    tar -zxvf CRYPTOPP_6_0_0.tar.gz
-    rm CRYPTOPP_6_0_0.tar.gz
+    if [ "$deploy_without_download" = "no" ]
+    then
+        wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_6_0_0.tar.gz
+        tar -zxvf CRYPTOPP_6_0_0.tar.gz
+        rm CRYPTOPP_6_0_0.tar.gz
+    fi
     cd cryptopp-CRYPTOPP_6_0_0
     make libcryptopp.so
     mkdir -p ../../NebulaDepend/include/cryptopp
@@ -108,22 +135,28 @@ else                # deploy remote
 
     # now download Nebula and NebulaBootstrap
     cd ${BUILD_PATH}
-    wget https://github.com/Bwar/Nebula/archive/master.zip
-    unzip master.zip
-    rm master.zip
-    mv Nebula-master Nebula
-    mkdir Nebula/include
-    mkdir Nebula/lib
+    if [ "$deploy_without_download" = "no" ]
+    then
+        wget https://github.com/Bwar/Nebula/archive/master.zip
+        unzip master.zip
+        rm master.zip
+        mv Nebula-master Nebula
+        mkdir Nebula/include
+        mkdir Nebula/lib
+    fi
     cd Nebula/proto
     ${BUILD_PATH}/NebulaDepend/bin/protoc *.proto --cpp_out=../src/pb
 
     cd ${BUILD_PATH}
     for server in $NEBULA_BOOTSTRAP
     do
-        wget https://github.com/Bwar/${server}/archive/master.zip 
-        unzip master.zip
-        rm master.zip
-        mv ${server}-master ${server}
+        if [ "$deploy_without_download" = "no" ]
+        then
+            wget https://github.com/Bwar/${server}/archive/master.zip 
+            unzip master.zip
+            rm master.zip
+            mv ${server}-master ${server}
+        fi
     done
 fi
 
