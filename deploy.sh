@@ -18,9 +18,8 @@ mkdir -p ${DEPLOY_PATH}/temp >> /dev/null 2>&1
 mkdir -p ${DEPLOY_PATH}/build >> /dev/null 2>&1
 
 replace_config="no"
-bin_file_num=`ls -l ${DEPLOY_PATH}/bin | wc -l`
-conf_file_num=`ls -l ${DEPLOY_PATH}/conf | wc -l`
-if [ $bin_file_num -gt 0 -a $conf_file_num -gt 0 ]            # deploy local
+build_dir_num=`ls -l ${DEPLOY_PATH}/build | wc -l`
+if [ $build_dir_num -gt 3 ]            # deploy local
 then
     echo "please input the build path[\"enter\" when using default build path]:"
     read build_path
@@ -73,14 +72,20 @@ else                # deploy remote
     cp libhiredis.so ../../NebulaDepend/lib/
 
     # install openssl
-    cd ${BUILD_PATH}/lib_build
-    wget https://github.com/openssl/openssl/archive/OpenSSL_1_1_0.zip
-    unzip OpenSSL_1_1_0.zip
-    rm OpenSSL_1_1_0.zip >> /dev/null 2>&1
-    cd openssl-OpenSSL_1_1_0
-    ./config --prefix=${BUILD_PATH}/NebulaDepend
-    make
-    make install
+    ssl_num=`whereis ssl | awk '{print NF}'`
+    if [ $ssl_num -gt 1 ]
+    then
+        echo "ssl had been installed."
+    else
+        cd ${BUILD_PATH}/lib_build
+        wget https://github.com/openssl/openssl/archive/OpenSSL_1_1_0.zip
+        unzip OpenSSL_1_1_0.zip
+        rm OpenSSL_1_1_0.zip >> /dev/null 2>&1
+        cd openssl-OpenSSL_1_1_0
+        ./config --prefix=${BUILD_PATH}/NebulaDepend
+        make
+        make install
+    fi
 
     # install crypto++
     cd ${BUILD_PATH}/lib_build
