@@ -20,7 +20,7 @@ mkdir -p ${DEPLOY_PATH}/build >> /dev/null 2>&1
 replace_config="no"
 bin_file_num=`ls -l ${DEPLOY_PATH}/bin | wc -l`
 conf_file_num=`ls -l ${DEPLOY_PATH}/conf | wc -l`
-if [ $bin_file_num -ge 3 -a $conf_file_num -ge 3 ]            # deploy local
+if [ $bin_file_num -gt 0 -a $conf_file_num -gt 0 ]            # deploy local
 then
     echo "please input the build path[\"enter\" when using default build path]:"
     read build_path
@@ -50,7 +50,10 @@ else                # deploy remote
 
     # install libev
     cd ${BUILD_PATH}/lib_build
-    git clone https://github.com/kindy/libev.git libev
+    wget https://github.com/kindy/libev/archive/master.zip
+    unzip master.zip
+    rm master.zip
+    mv libev-master libev
     cd libev/src
     chmod u+x autogen.sh
     ./autogen.sh
@@ -60,7 +63,9 @@ else                # deploy remote
 
     # install hiredis
     cd ${BUILD_PATH}/lib_build
-    git clone https://github.com/redis/hiredis.git hiredis
+    wget https://github.com/redis/hiredis/archive/v0.13.0.zip
+    unzip v0.13.0.zip
+    mv hiredis-0.13.0 hiredis
     cd hiredis
     make
     mkdir -p ../../NebulaDepend/include/hiredis
@@ -123,6 +128,8 @@ echo "yes" | ./shutdown.sh
 rm log/* >> /dev/null 2>&1
 
 cd ${BUILD_PATH}/Nebula/src
+sed -i 's/gcc-6/gcc/g' Makefile
+sed -i 's/g++-6/g++/g' Makefile
 make clean; make
 cp libnebula.so ${DEPLOY_PATH}/lib/
 
@@ -130,6 +137,8 @@ cp libnebula.so ${DEPLOY_PATH}/lib/
 for server in $NEBULA_BOOTSTRAP
 do
     cd ${BUILD_PATH}/${server}/src/
+    sed -i 's/gcc-6/gcc/g' Makefile
+    sed -i 's/g++-6/g++/g' Makefile
     make clean; make
     cp ${server} ${DEPLOY_PATH}/bin/
     if [[ "$replace_config" == "yes" ]]
@@ -141,6 +150,8 @@ done
 
 
 cd ${BUILD_PATH}/NebulaDynamic/Hello/src/
+sed -i 's/gcc-6/gcc/g' Makefile
+sed -i 's/g++-6/g++/g' Makefile
 make clean; make
 cp *.so ${DEPLOY_PATH}/plugins/logic/
 
