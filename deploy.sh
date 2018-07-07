@@ -430,11 +430,14 @@ do
 done
 
 
-cd ${BUILD_PATH}/NebulaDynamic/Hello/src/
-sed -i 's/gcc-6/gcc/g' Makefile
-sed -i 's/g++-6/g++/g' Makefile
-make clean; make
-cp *.so ${DEPLOY_PATH}/plugins/logic/ >> /dev/null
+if [ -d ${BUILD_PATH}/NebulaDynamic ]
+then
+    cd ${BUILD_PATH}/NebulaDynamic/Hello/src/
+    sed -i 's/gcc-6/gcc/g' Makefile
+    sed -i 's/g++-6/g++/g' Makefile
+    make clean; make
+    cp *.so ${DEPLOY_PATH}/plugins/logic/ >> /dev/null
+fi
 
 
 cd ${DEPLOY_PATH}/
