@@ -126,9 +126,9 @@ else                # deploy remote
     cd ${BUILD_PATH}/lib_build
     if ! $DEPLOY_LOCAL
     then
-        if [ -d protobuf-3.6.0 ]
+        if [ -f v3.6.0.zip ]
         then
-            echo "directory protobuf-3.6.0 exist, skip download."
+            echo "protobuf-3.6.0 exist, skip download."
         else
             wget https://github.com/google/protobuf/archive/v3.6.0.zip
             if [ $? -ne 0 ]
@@ -136,10 +136,9 @@ else                # deploy remote
                 echo "failed to download protobuf!" >&2
                 exit 2
             fi
-            unzip v3.6.0.zip
-            rm v3.6.0.zip >> /dev/null 2>&1
         fi
     fi
+    unzip v3.6.0.zip
     cd protobuf-3.6.0
     chmod u+x autogen.sh
     ./autogen.sh
@@ -151,14 +150,16 @@ else                # deploy remote
         echo "failed, teminated!" >&2
         exit 2
     fi
+    cd ${BUILD_PATH}/lib_build
+    rm -rf protobuf-3.6.0 
 
     # install libev
     cd ${BUILD_PATH}/lib_build
     if ! $DEPLOY_LOCAL
     then
-        if [ -d libev ]
+        if [ -f libev.zip ]
         then
-            echo "directory libev exist, skip download."
+            echo "libev exist, skip download."
         else
             wget https://github.com/kindy/libev/archive/master.zip
             if [ $? -ne 0 ]
@@ -166,11 +167,11 @@ else                # deploy remote
                 echo "failed to download libev!" >&2
                 exit 2
             fi
-            unzip master.zip
-            rm master.zip
-            mv libev-master libev
+            mv master.zip libev.zip
         fi
     fi
+    unzip libev.zip
+    mv libev-master libev
     cd libev/src
     chmod u+x autogen.sh
     ./autogen.sh
@@ -182,12 +183,14 @@ else                # deploy remote
         echo "failed, teminated!" >&2
         exit 2
     fi
+    cd ${BUILD_PATH}/lib_build
+    rm -rf libev
 
     # install hiredis
     cd ${BUILD_PATH}/lib_build
     if ! $DEPLOY_LOCAL
     then
-        if [ -d hiredis ]
+        if [ -f hiredis_v0.13.0.zip ]
         then
             echo "directory hiredis exist, skip download."
         else
@@ -197,11 +200,11 @@ else                # deploy remote
                 echo "failed to download hiredis!" >&2
                 exit 2
             fi
-            unzip v0.13.0.zip
-            rm v0.13.0.zip
-            mv hiredis-0.13.0 hiredis
+            mv v0.13.0.zip hiredis_v0.13.0.zip
         fi
     fi
+    unzip v0.13.0.zip
+    mv hiredis-0.13.0 hiredis
     cd hiredis
     make
     mkdir -p ../../NebulaDepend/include/hiredis
@@ -212,6 +215,8 @@ else                # deploy remote
         echo "failed, teminated!" >&2
         exit 2
     fi
+    cd ${BUILD_PATH}/lib_build
+    rm -rf hiredis
 
     # install openssl
     if $DEPLOY_WITH_CUSTOM_SSL
@@ -219,9 +224,9 @@ else                # deploy remote
         cd ${BUILD_PATH}/lib_build
         if ! $DEPLOY_LOCAL
         then
-            if [ -d openssl-OpenSSL_1_1_0 ]
+            if [ -f OpenSSL_1_1_0.zip ]
             then
-                echo "directory openssl-OpenSSL_1_1_0 exist, skip download."
+                echo "openssl-OpenSSL_1_1_0 exist, skip download."
             else
                 wget https://github.com/openssl/openssl/archive/OpenSSL_1_1_0.zip
                 if [ $? -ne 0 ]
@@ -229,10 +234,9 @@ else                # deploy remote
                     echo "failed to download openssl!" >&2
                     exit 2
                 fi
-                unzip OpenSSL_1_1_0.zip
-                rm OpenSSL_1_1_0.zip >> /dev/null 2>&1
             fi
         fi
+        unzip OpenSSL_1_1_0.zip
         cd openssl-OpenSSL_1_1_0
         ./config --prefix=${BUILD_PATH}/NebulaDepend
         make
@@ -242,15 +246,17 @@ else                # deploy remote
             echo "failed, teminated!" >&2
             exit 2
         fi
+        cd ${BUILD_PATH}/lib_build
+        rm -rf openssl-OpenSSL_1_1_0
     fi
 
     # install crypto++
     cd ${BUILD_PATH}/lib_build
     if ! $DEPLOY_LOCAL
     then
-        if [ -d cryptopp-CRYPTOPP_6_0_0 ]
+        if [ -f CRYPTOPP_6_0_0.tar.gz ]
         then
-            echo "directory cryptopp-CRYPTOPP_6_0_0 exist, skip download."
+            echo "cryptopp-CRYPTOPP_6_0_0 exist, skip download."
         else
             wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_6_0_0.tar.gz
             if [ $? -ne 0 ]
@@ -258,10 +264,9 @@ else                # deploy remote
                 echo "failed to download crypto++!" >&2
                 exit 2
             fi
-            tar -zxvf CRYPTOPP_6_0_0.tar.gz
-            rm CRYPTOPP_6_0_0.tar.gz
         fi
     fi
+    tar -zxvf CRYPTOPP_6_0_0.tar.gz
     cd cryptopp-CRYPTOPP_6_0_0
     make libcryptopp.so
     mkdir -p ../../NebulaDepend/include/cryptopp
@@ -272,25 +277,37 @@ else                # deploy remote
         echo "failed, teminated!" >&2
         exit 2
     fi
+    cd ${BUILD_PATH}/lib_build
+    rm -rf cryptopp-CRYPTOPP_6_0_0
 
     # copy libs to deploy path
     cd ${BUILD_PATH}/NebulaDepend/lib
-    tar -zcvf neb_depend.tar.gz lib* pkgconfig 
+    tar -zcvf neb_depend.tar.gz lib*.so lib*.so.* 
     mv neb_depend.tar.gz ${DEPLOY_PATH}/lib/
+    rm lib*.a lib*.la
     cd ${DEPLOY_PATH}/lib
     rm -r lib*
     tar -zxvf neb_depend.tar.gz
     rm neb_depend.tar.gz
-
 fi
+
+
+# shutdown running nebula server
+if $DEPLOY_LOCAL -a $DEPLOY_ONLY_NEBULA
+then
+    cd ${DEPLOY_PATH}
+    echo "yes" | ./shutdown.sh
+    rm log/* >> /dev/null 2>&1
+fi
+
 
 # download Nebula 
 cd ${BUILD_PATH}
 if ! $DEPLOY_LOCAL
 then
-    if [ -d Nebula ]
+    if [ -f Nebula.zip ]
     then
-        echo "directory Nebula exist, skip download."
+        echo "Nebula exist, skip download."
     else
         wget https://github.com/Bwar/Nebula/archive/master.zip
         if [ $? -ne 0 ]
@@ -298,13 +315,13 @@ then
             echo "failed to download Nebula!" >&2
             exit 2
         fi
-        unzip master.zip
-        rm master.zip
-        mv Nebula-master Nebula
-        mkdir Nebula/include
-        mkdir Nebula/lib
+        mv master.zip Nebula.zip
     fi
 fi
+unzip Nebula.zip 
+mv Nebula-master Nebula
+mkdir Nebula/include
+mkdir Nebula/lib
 cd Nebula/proto
 ${BUILD_PATH}/NebulaDepend/bin/protoc *.proto --cpp_out=../src/pb
 if [ $? -ne 0 ]
@@ -313,42 +330,7 @@ then
     exit 2
 fi
 
-# download NebulaBootstrap server
-cd ${BUILD_PATH}
-for server in $NEBULA_BOOTSTRAP
-do
-    if ! $DEPLOY_LOCAL
-    then
-        if [ -d "${server}" ]
-        then
-            echo "directory ${server} exist, skip download."
-        else
-            wget https://github.com/Bwar/${server}/archive/master.zip 
-            if [ $? -ne 0 ]
-            then
-                echo "failed to download ${server}!" >&2
-                exit 2
-            fi
-            unzip master.zip
-            rm master.zip
-            mv ${server}-master ${server}
-            if [ $? -ne 0 ]
-            then
-                echo "failed, teminated!" >&2
-                exit 2
-            fi
-        fi
-    fi
-done
-
-if $DEPLOY_LOCAL -a $DEPLOY_ONLY_NEBULA
-then
-    cd ${DEPLOY_PATH}
-    echo "yes" | ./shutdown.sh
-    rm log/* >> /dev/null 2>&1
-fi
-
-# modify Makefile and make
+# modify Nebula Makefile and make
 cd ${BUILD_PATH}/Nebula/src
 sed -i 's/gcc-6/gcc/g' Makefile
 sed -i 's/g++-6/g++/g' Makefile
@@ -384,10 +366,30 @@ then
     echo "failed, teminated!" >&2
     exit 2
 fi
+cd ${BUILD_PATH}
+rm -rf Nebula
 
-
+# download NebulaBootstrap server
+cd ${BUILD_PATH}
 for server in $NEBULA_BOOTSTRAP
 do
+    if ! $DEPLOY_LOCAL
+    then
+        if [ -d "${server}.zip" ]
+        then
+            echo "${server} exist, skip download."
+        else
+            wget https://github.com/Bwar/${server}/archive/master.zip 
+            if [ $? -ne 0 ]
+            then
+                echo "failed to download ${server}!" >&2
+                exit 2
+            fi
+            mv master.zip ${server}.zip
+        fi
+    fi
+    unzip ${server}.zip
+    mv ${server}-master ${server}
     cd ${BUILD_PATH}/${server}/src/
     sed -i 's/gcc-6/gcc/g' Makefile
     sed -i 's/g++-6/g++/g' Makefile
@@ -427,6 +429,9 @@ do
         cd ${BUILD_PATH}/${server}/conf/
         cp *.json ${DEPLOY_PATH}/conf/
     fi
+
+    cd ${BUILD_PATH}
+    rm -rf ${server}
 done
 
 
@@ -440,6 +445,7 @@ then
 fi
 
 
+# startup nebula server
 cd ${DEPLOY_PATH}/
 if [[ "$replace_config" == "yes" ]]
 then
