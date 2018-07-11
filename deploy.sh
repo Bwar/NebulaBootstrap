@@ -203,7 +203,7 @@ else                # deploy remote
             mv v0.13.0.zip hiredis_v0.13.0.zip
         fi
     fi
-    unzip v0.13.0.zip
+    unzip hiredis_v0.13.0.zip
     mv hiredis-0.13.0 hiredis
     cd hiredis
     make
@@ -286,7 +286,7 @@ else                # deploy remote
     mv neb_depend.tar.gz ${DEPLOY_PATH}/lib/
     rm lib*.a lib*.la
     cd ${DEPLOY_PATH}/lib
-    rm -r lib*
+    rm -r lib* >> /dev/null
     tar -zxvf neb_depend.tar.gz
     rm neb_depend.tar.gz
 fi
