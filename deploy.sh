@@ -102,7 +102,7 @@ do
     esac
 done
 
-replace_config="no"
+replace_config="yes"
 build_dir_num=`ls -l ${DEPLOY_PATH}/build | wc -l`
 if $DEPLOY_ONLY_NEBULA
 then
@@ -318,10 +318,15 @@ then
         mv master.zip Nebula.zip
     fi
 fi
-unzip Nebula.zip 
-mv Nebula-master Nebula
-mkdir Nebula/include
-mkdir Nebula/lib
+if [ -d Nebula ]
+then
+    echo "Nebula directory exist."
+else
+    unzip Nebula.zip 
+    mv Nebula-master Nebula
+    mkdir Nebula/include
+    mkdir Nebula/lib
+fi
 cd Nebula/proto
 ${BUILD_PATH}/NebulaDepend/bin/protoc *.proto --cpp_out=../src/pb
 if [ $? -ne 0 ]
@@ -367,7 +372,6 @@ then
     exit 2
 fi
 cd ${BUILD_PATH}
-rm -rf Nebula
 
 # download NebulaBootstrap server
 cd ${BUILD_PATH}
@@ -375,7 +379,7 @@ for server in $NEBULA_BOOTSTRAP
 do
     if ! $DEPLOY_LOCAL
     then
-        if [ -d "${server}.zip" ]
+        if [ -f "${server}.zip" ]
         then
             echo "${server} exist, skip download."
         else
@@ -388,8 +392,13 @@ do
             mv master.zip ${server}.zip
         fi
     fi
-    unzip ${server}.zip
-    mv ${server}-master ${server}
+    if [ -d ${server} ]
+    then
+        echo "${server} directory exist."
+    else
+        unzip ${server}.zip
+        mv ${server}-master ${server}
+    fi
     cd ${BUILD_PATH}/${server}/src/
     sed -i 's/gcc-6/gcc/g' Makefile
     sed -i 's/g++-6/g++/g' Makefile
@@ -431,10 +440,32 @@ do
     fi
 
     cd ${BUILD_PATH}
-    rm -rf ${server}
 done
 
 
+# download NebulaDynamic and build
+if ! $DEPLOY_LOCAL
+then
+    if [ -f "NebulaDynamic.zip" ]
+    then
+        echo "NebulaDynamic exist, skip download."
+    else
+        wget https://github.com/Bwar/NebulaDynamic/archive/master.zip 
+        if [ $? -ne 0 ]
+        then
+            echo "failed to download NebulaDynamic!" >&2
+            exit 2
+        fi
+        mv master.zip NebulaDynamic.zip
+    fi
+fi
+if [ -d NebulaDynamic ]
+then
+    echo "NebulaDynamic directory exist."
+else
+    unzip NebulaDynamic.zip
+    mv NebulaDynamic-master NebulaDynamic
+fi
 if [ -d ${BUILD_PATH}/NebulaDynamic ]
 then
     cd ${BUILD_PATH}/NebulaDynamic/Hello/src/
@@ -443,6 +474,7 @@ then
     make clean; make
     cp *.so ${DEPLOY_PATH}/plugins/logic/ >> /dev/null
 fi
+cd ${BUILD_PATH}
 
 
 # startup nebula server
