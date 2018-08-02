@@ -1,0 +1,15 @@
+{
+	"module":[
+		{
+			"node_type":["DEMO"],
+			"url_path":"/hello_switch",
+			"cmd":1001,
+			"session_id":{"position":"header", "key_in":"cookie", "key":"imid"}
+		},
+		{
+			"node_type":["OSSI","INTERFACE"],
+			"url_path":"/hello_switch",
+			"cmd":65531
+		}
+	]
+}

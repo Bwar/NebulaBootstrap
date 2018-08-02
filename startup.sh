@@ -57,7 +57,7 @@ neb_server_queue=""
 
 for neb_bin in $neb_server_bin_files
 do
-    if [[ "Beacon" == "$neb_bin" || "beacon" == "$neb_bin" ]]
+    if [[ "$neb_bin" =~ "Beacon" || "$neb_bin" =~ "beacon" ]]
     then
         neb_server_queue="${neb_bin} ${neb_server_queue}"
     else

@@ -284,9 +284,8 @@ else                # deploy remote
     cd ${BUILD_PATH}/NebulaDepend/lib
     tar -zcvf neb_depend.tar.gz lib*.so lib*.so.* 
     mv neb_depend.tar.gz ${DEPLOY_PATH}/lib/
-    rm lib*.a lib*.la
     cd ${DEPLOY_PATH}/lib
-    rm -r lib* >> /dev/null
+    rm -r lib* >> /dev/null 2>&1
     tar -zxvf neb_depend.tar.gz
     rm neb_depend.tar.gz
 fi

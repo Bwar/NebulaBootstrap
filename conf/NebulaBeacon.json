@@ -1,0 +1,70 @@
+{
+    "node_type":"BEACON",
+    "//host":"系统内各Server之间通信绑定的IP（Server to Server）",
+    "host":"192.168.157.130",
+    "//port":"系统内各Server之间通信监听的端口",
+    "port":16000,
+    "//server_name":"异步事件驱动Server",
+    "server_name":"neb_Beacon",
+    "//process_num":"进程数量",
+    "process_num":1,
+    "//worker_capacity":"子进程最大工作负荷",
+    "worker_capacity":1000000,
+    "//config_path":"配置文件路径（相对路径）",
+    "config_path":"conf/",
+    "beacon": [
+        { "host": "192.168.1.11", "port": 16000 },
+        { "host": "192.168.1.12", "port": 16000 }
+    ],
+    "//log_path":"日志文件路径（相对路径）",
+    "log_path":"log/",
+    "//max_log_file_num":"最大日志文件数量，用于日志文件滚动",
+    "max_log_file_num":5,
+    "//max_log_file_size":"单个日志文件大小限制",
+    "max_log_file_size":20480000,
+    "//io_timeout":"网络IO（连接）超时设置（单位：秒）小数点后面至少保留一位",
+    "io_timeout":300.0,
+    "//step_timeout":"步骤超时设置（单位：秒）小数点后面至少保留一位",
+    "step_timeout":1.5,
+    "log_levels": { "FATAL": 0, "CRITICAL": 1, "ERROR": 2, "NOTICE": 3, "WARNING": 4, "INFO": 5, "DEBUG": 6, "TRACE": 7 },
+    "log_level": 7,
+    "net_log_level": 6,
+    "boot_load":{
+        "cmd":[
+            {"cmd":11, "class":"beacon::CmdNodeReport"},
+            {"cmd":13, "class":"beacon::CmdNodeRegister"},
+            {"cmd":19, "class":"beacon::CmdNodeDisconnect"}
+         ],
+         "module":[]
+    },
+    "//refresh_interval":"刷新Server配置，检查、加载插件动态库时间周期（周期时间长短视服务器忙闲而定）",
+    "refresh_interval":60,    
+    "dynamic_loading":{},
+    "//custom":"自定义配置，用于通过框架层带给业务",
+    "custom":{
+        "//config_choice":"db_config or local_config",
+        "config_choice":"local_config",
+        "db_config":{
+            "host":"192.168.157.130",
+            "port":3306,
+            "db_name":"db_beacon",
+            "user":"neb_beacon",
+            "password":"That's a cat!",
+            "charset":"utf8"
+        },
+        "local_config":{
+		    "ipwhite":["192.168.157.130"],
+		    "node_type":[
+		        {"level":0, "node_type":"BEACON", "subscribe":[]},
+		        {"level":1, "node_type":"ACCESS", "subscribe":["LOGIC", "LOGGER"]},
+		        {"level":2, "node_type":"LOGIC", "subscribe":["LOGIC", "STORAGE", "LOGGER"]},
+		        {"level":3, "node_type":"STORAGE", "subscribe":["DBAGENT_W", "DBAGENT_R", "LOGGER"]},
+		        {"level":4, "node_type":"DBAGENT_W", "subscribe":["LOGGER"]},
+		        {"level":4, "node_type":"DBAGENT_R", "subscribe":["LOGGER"]},
+		        {"level":1, "node_type":"INTERFACE", "subscribe":["LOGIC", "STORAGE", "LOGGER"]},
+		        {"level":1, "node_type":"ENTRANCE", "subscribe":["LOGIC", "STORAGE", "LOGGER"]},
+		        {"level":1, "node_type":"LOGGER", "subscribe":[]}
+		    ]
+	    }
+    }
+}
