@@ -137,21 +137,22 @@ else                # deploy remote
                 exit 2
             fi
         fi
+
+        unzip v3.6.0.zip
+        cd protobuf-3.6.0
+        chmod u+x autogen.sh
+        ./autogen.sh
+        ./configure --prefix=${BUILD_PATH}/NebulaDepend
+        make
+        make install
+        if [ $? -ne 0 ]
+        then
+            echo "failed, teminated!" >&2
+            exit 2
+        fi
+        cd ${BUILD_PATH}/lib_build
+        rm -rf protobuf-3.6.0 
     fi
-    unzip v3.6.0.zip
-    cd protobuf-3.6.0
-    chmod u+x autogen.sh
-    ./autogen.sh
-    ./configure --prefix=${BUILD_PATH}/NebulaDepend
-    make
-    make install
-    if [ $? -ne 0 ]
-    then
-        echo "failed, teminated!" >&2
-        exit 2
-    fi
-    cd ${BUILD_PATH}/lib_build
-    rm -rf protobuf-3.6.0 
 
     # install libev
     cd ${BUILD_PATH}/lib_build
@@ -169,22 +170,23 @@ else                # deploy remote
             fi
             mv master.zip libev.zip
         fi
+
+        unzip libev.zip
+        mv libev-master libev
+        cd libev/src
+        chmod u+x autogen.sh
+        ./autogen.sh
+        ./configure --prefix=${BUILD_PATH}/NebulaDepend
+        make
+        make install
+        if [ $? -ne 0 ]
+        then
+            echo "failed, teminated!" >&2
+            exit 2
+        fi
+        cd ${BUILD_PATH}/lib_build
+        rm -rf libev
     fi
-    unzip libev.zip
-    mv libev-master libev
-    cd libev/src
-    chmod u+x autogen.sh
-    ./autogen.sh
-    ./configure --prefix=${BUILD_PATH}/NebulaDepend
-    make
-    make install
-    if [ $? -ne 0 ]
-    then
-        echo "failed, teminated!" >&2
-        exit 2
-    fi
-    cd ${BUILD_PATH}/lib_build
-    rm -rf libev
 
     # install hiredis
     cd ${BUILD_PATH}/lib_build
@@ -202,21 +204,22 @@ else                # deploy remote
             fi
             mv v0.13.0.zip hiredis_v0.13.0.zip
         fi
+
+        unzip hiredis_v0.13.0.zip
+        mv hiredis-0.13.0 hiredis
+        cd hiredis
+        make
+        mkdir -p ../../NebulaDepend/include/hiredis
+        cp -r adapters *.h ../../NebulaDepend/include/hiredis/
+        cp libhiredis.so ../../NebulaDepend/lib/
+        if [ $? -ne 0 ]
+        then
+            echo "failed, teminated!" >&2
+            exit 2
+        fi
+        cd ${BUILD_PATH}/lib_build
+        rm -rf hiredis
     fi
-    unzip hiredis_v0.13.0.zip
-    mv hiredis-0.13.0 hiredis
-    cd hiredis
-    make
-    mkdir -p ../../NebulaDepend/include/hiredis
-    cp -r adapters *.h ../../NebulaDepend/include/hiredis/
-    cp libhiredis.so ../../NebulaDepend/lib/
-    if [ $? -ne 0 ]
-    then
-        echo "failed, teminated!" >&2
-        exit 2
-    fi
-    cd ${BUILD_PATH}/lib_build
-    rm -rf hiredis
 
     # install openssl
     if $DEPLOY_WITH_CUSTOM_SSL
@@ -235,19 +238,20 @@ else                # deploy remote
                     exit 2
                 fi
             fi
+
+            unzip OpenSSL_1_1_0.zip
+            cd openssl-OpenSSL_1_1_0
+            ./config --prefix=${BUILD_PATH}/NebulaDepend
+            make
+            make install
+            if [ $? -ne 0 ]
+            then
+                echo "failed, teminated!" >&2
+                exit 2
+            fi
+            cd ${BUILD_PATH}/lib_build
+            rm -rf openssl-OpenSSL_1_1_0
         fi
-        unzip OpenSSL_1_1_0.zip
-        cd openssl-OpenSSL_1_1_0
-        ./config --prefix=${BUILD_PATH}/NebulaDepend
-        make
-        make install
-        if [ $? -ne 0 ]
-        then
-            echo "failed, teminated!" >&2
-            exit 2
-        fi
-        cd ${BUILD_PATH}/lib_build
-        rm -rf openssl-OpenSSL_1_1_0
     fi
 
     # install crypto++
@@ -265,29 +269,33 @@ else                # deploy remote
                 exit 2
             fi
         fi
+
+        tar -zxvf CRYPTOPP_6_0_0.tar.gz
+        cd cryptopp-CRYPTOPP_6_0_0
+        make libcryptopp.so
+        mkdir -p ../../NebulaDepend/include/cryptopp
+        cp *.h ../../NebulaDepend/include/cryptopp/
+        cp libcryptopp.so ../../NebulaDepend/lib/
+        if [ $? -ne 0 ]
+        then
+            echo "failed, teminated!" >&2
+            exit 2
+        fi
+        cd ${BUILD_PATH}/lib_build
+        rm -rf cryptopp-CRYPTOPP_6_0_0
     fi
-    tar -zxvf CRYPTOPP_6_0_0.tar.gz
-    cd cryptopp-CRYPTOPP_6_0_0
-    make libcryptopp.so
-    mkdir -p ../../NebulaDepend/include/cryptopp
-    cp *.h ../../NebulaDepend/include/cryptopp/
-    cp libcryptopp.so ../../NebulaDepend/lib/
-    if [ $? -ne 0 ]
-    then
-        echo "failed, teminated!" >&2
-        exit 2
-    fi
-    cd ${BUILD_PATH}/lib_build
-    rm -rf cryptopp-CRYPTOPP_6_0_0
 
     # copy libs to deploy path
-    cd ${BUILD_PATH}/NebulaDepend/lib
-    tar -zcvf neb_depend.tar.gz lib*.so lib*.so.* 
-    mv neb_depend.tar.gz ${DEPLOY_PATH}/lib/
-    cd ${DEPLOY_PATH}/lib
-    rm -r lib* >> /dev/null 2>&1
-    tar -zxvf neb_depend.tar.gz
-    rm neb_depend.tar.gz
+    if ! $DEPLOY_LOCAL
+    then
+        cd ${BUILD_PATH}/NebulaDepend/lib
+        tar -zcvf neb_depend.tar.gz lib*.so lib*.so.* 
+        mv neb_depend.tar.gz ${DEPLOY_PATH}/lib/
+        cd ${DEPLOY_PATH}/lib
+        rm -r lib* >> /dev/null 2>&1
+        tar -zxvf neb_depend.tar.gz
+        rm neb_depend.tar.gz
+    fi
 fi
 
 
