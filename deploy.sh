@@ -348,10 +348,11 @@ sed -i 's/gcc-6/gcc/g' Makefile
 sed -i 's/g++-6/g++/g' Makefile
 if $DEPLOY_WITH_SSL
 then
-    sed -i 's/-L$(LIB3RD_PATH)\/lib -lssl/-L$(SYSTEM_LIB_PATH)\/lib -lssl/g' Makefile
+    sed -i 's/-D__GUNC__/-D__GUNC__ -DWITH_OPENSSL/g' Makefile
+    sed -i "/-L\$(LIB3RD_PATH)\/lib -lprotobuf/a\           -L\$(SYSTEM_LIB_PATH)\/lib -lssl \x5c" Makefile
     if [ ! -z "$SSL_INCLUDE_PATH" ]
     then
-        sed -i "/-I \$(LIB3RD_PATH)\/include/i\        -I ${SSLINCLUDE_PATH} \x5c" Makefile
+        sed -i "/-I \$(LIB3RD_PATH)\/include/a\        -I ${SSLINCLUDE_PATH} \x5c" Makefile
     fi
     if [ ! -z "$SSL_LIB_PATH" ]
     then
@@ -359,17 +360,20 @@ then
     fi
 elif $DEPLOY_WITH_CUSTOM_SSL
 then
+    sed -i 's/-D__GUNC__/-D__GUNC__ -DWITH_OPENSSL/g' Makefile
+    sed -i "/-L\$(LIB3RD_PATH)\/lib -lprotobuf/a\           -L\$(LIB3RD_PATH)\/lib -lssl \x5c" Makefile
     if [ ! -z "$SSL_INCLUDE_PATH" ]
     then
-        sed -i "/-I \$(LIB3RD_PATH)\/include/i\        -I ${SSLINCLUDE_PATH} \x5c" Makefile
+        sed -i "/-I \$(LIB3RD_PATH)\/include/a\        -I ${SSLINCLUDE_PATH} \x5c" Makefile
     fi
     if [ ! -z "$SSL_LIB_PATH" ]
     then
-        sed -i "s/-L\$(SYSTEM_LIB_PATH)\/lib -lssl/-L${SSL_LIB_PATH} -lssl/g" Makefile
+        sed -i "s/-L\$(LIB3RD_PATH)\/lib -lssl/-L${SSL_LIB_PATH} -lssl/g" Makefile
     fi
 else
     sed -i 's/-DWITH_OPENSSL / /g' Makefile
     sed -i '/-L$(LIB3RD_PATH)\/lib -lssl/d' Makefile
+    sed -i '/-L$(SYSTEM_LIB_PATH)\/lib -lssl/d' Makefile
 fi
 make clean; make
 cp libnebula.so ${DEPLOY_PATH}/lib/
