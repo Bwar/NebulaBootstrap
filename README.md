@@ -53,9 +53,30 @@ MIT License
    4. chmod u+x deploy.sh
    5. ./deploy.sh
    
-   then bootstrap:
-   1. ./configure.sh
-   2. ./startup.sh
+   Run deploy.sh, the NebulaBootstrap distributed services were build completed. The reliance of Nebula was also automatically downloaded and compiled by deploy from the Internet before the construction of Nebula. The deploy path as follows:
+* NebulaBootstrap
+  + bin &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; server bin location。
+  + build &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; build path，created by deploy.sh, if you do not need to build again, just delete it.(optional)。
+  + conf &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; configuration path.
+  + data &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; application data path. e.g. [Nebio](https://github.com/Bwar/Nebio) which is a data collect and real-time analysis application, write it's data to this path (optional).
+  + lib &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; library path.
+  + log &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; program logs path.
+  + plugins &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plugins path.
+    - logic &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plugins for logic server(optional).
+  + script &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; script path. deploy.sh, startup.sh and shutdown.sh were depend on this path.
+  + temp &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp file path(optional).
+  - configure.sh &nbsp;&nbsp;&nbsp; run configure.sh for a simple configuration when deploy for the first time.
+  - deploy.sh &nbsp;&nbsp;&nbsp;&nbsp; auto build and deploy.
+  - shutdown.sh &nbsp;&nbsp;&nbsp;&nbsp; shutdown one or more server.
+  - startup.sh &nbsp;&nbsp;&nbsp;&nbsp; startup one or more server.
+  - README_cn.md              
+  - README.md  
+
+  build completed, you can start the server:
+```
+./configure.sh
+./startup.s
+```
 
 <a name="Documentation"></a>
 ## Documentation 
@@ -64,20 +85,37 @@ MIT License
 <a name="DependOn"></a>
 ## Depend on 
    * [protobuf](https://github.com/google/protobuf)
-   * [libev](https://github.com/kindy/libev)
+   * [libev](http://software.schmorp.de/pkg/libev.html) or [libev](https://github.com/kindy/libev)
    * [hiredis](https://github.com/redis/hiredis)
    * [crypto++](http://www.cryptopp.com)
-   * [Nebula](https://github.com/Bwar/Nebula) 
+   * [http_parse](https://github.com/nodejs/http-parser) integrate into Nebula/src/util/http 
+   * [CJsonObject](https://github.com/Bwar/CJsonObject) integrate into Nebula/src/util/json
 
 <a name="TODO"></a>
 ## Todo list 
-   - June 2018:    NebulaLogger online, NebulaDbAgent online.
-   - July 2018:    NebulaAccess online, NebulaStorage online.
-   - Auguest 2018: NebulaBootstrap documentation.
+   - NebulaMydis Data Agency Service.
+   - Developing an IM with the Nebula.
 
 <a name="ChangeLog"></a>
 ## Change log 
+#### v0.6
+   - NebulaBeacon adds node status information query, registration center leader-fllower election.
+   - NebulaInterface adds hello demo.
+#### v0.5
+   - add node info to worker the worker process terminated unexpectedly and restarted by the Manager.
+   - ipv6 support.
+#### v0.4
+   - distributed log service test passing.
+   - add https support.
+   - add keep alive settings to http channel.
+   - replace repeated http headers with proto3 map.
+   - provides a symmetric encryption key setup interface for channel.
+   - bug fix.
 #### v0.3
+   - rewrite with C++14
+   - create actors by reflection (using template)
+   - add distributed trace log
+#### v0.2
    - the first runable version
 
 <br/>
