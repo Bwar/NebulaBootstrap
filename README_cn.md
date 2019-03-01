@@ -71,8 +71,6 @@ curl -H "Content-Type:application/json" -X POST -d '{"name": "Nebula", "address"
 ```
 &emsp;&emsp;这个简单的测试可以只启动一个NebulaInterface即可完成，也可以启动分布式服务完成。NebulaBootstrap提供基于集群和单个Server的HelloWorld，基于集群的HelloWorld启动了NebulaBeacon、NebulaInterface、NebulaLogic三个server。下面是一张集群架构图：
 
-![nebula_cluster](https://github.com/Bwar/NebulaBootstrap/blob/master/image/nebula_cluster.png?raw=true)
-
 <a name="Documentation"></a>
 ## 文档
 Nebula 完成的文档在 [Nebula documentation](https://github.com/Bwar/Nebula/wiki)，持续更新中。
