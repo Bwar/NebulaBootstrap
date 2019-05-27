@@ -262,6 +262,7 @@ else                # deploy remote
         then
             echo "cryptopp-CRYPTOPP_6_0_0 exist, skip download."
         else
+            #wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_8_0_0.zip
             wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_6_0_0.tar.gz
             if [ $? -ne 0 ]
             then
@@ -409,6 +410,16 @@ do
     else
         unzip ${server}.zip
         mv ${server}-master ${server}
+    fi
+    if [ -d ${server}/proto ]
+    then
+        cd ${server}/proto
+        ${BUILD_PATH}/NebulaDepend/bin/protoc *.proto --cpp_out=../src
+        if [ $? -ne 0 ]
+        then
+            echo "failed, teminated!" >&2
+            exit 2
+        fi
     fi
     cd ${BUILD_PATH}/${server}/src/
     sed -i 's/gcc-6/gcc/g' Makefile
