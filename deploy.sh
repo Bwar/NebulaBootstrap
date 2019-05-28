@@ -258,12 +258,11 @@ else                # deploy remote
     cd ${BUILD_PATH}/lib_build
     if ! $DEPLOY_LOCAL
     then
-        if [ -f CRYPTOPP_6_0_0.tar.gz ]
+        if [ -f CRYPTOPP_8_0_0.zip ]
         then
-            echo "cryptopp-CRYPTOPP_6_0_0 exist, skip download."
+            echo "cryptopp-CRYPTOPP_8_0_0 exist, skip download."
         else
-            #wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_8_0_0.zip
-            wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_6_0_0.tar.gz
+            wget https://github.com/weidai11/cryptopp/archive/CRYPTOPP_8_0_0.zip
             if [ $? -ne 0 ]
             then
                 echo "failed to download crypto++!" >&2
@@ -271,8 +270,8 @@ else                # deploy remote
             fi
         fi
 
-        tar -zxvf CRYPTOPP_6_0_0.tar.gz
-        cd cryptopp-CRYPTOPP_6_0_0
+        unzip CRYPTOPP_8_0_0.zip
+        cd cryptopp-CRYPTOPP_8_0_0
         make libcryptopp.so
         mkdir -p ../../NebulaDepend/include/cryptopp
         cp *.h ../../NebulaDepend/include/cryptopp/
@@ -283,7 +282,7 @@ else                # deploy remote
             exit 2
         fi
         cd ${BUILD_PATH}/lib_build
-        rm -rf cryptopp-CRYPTOPP_6_0_0
+        rm -rf cryptopp-CRYPTOPP_8_0_0
     fi
 
     # copy libs to deploy path
