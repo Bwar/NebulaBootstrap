@@ -98,6 +98,12 @@ MIT License
 
 <a name="ChangeLog"></a>
 ## Change log 
+#### v0.8
+   - compatible with gcc4.8 compiler.
+   - add cpu affinity inorder to support cpu binding.
+   - add dynamic library unload.
+#### v0.7
+   - add configuration management(check [Nebcli](https://github.com/Bwar/Nebcli) for detail).
 #### v0.6
    - NebulaBeacon adds node status information query, registration center leader-fllower election.
    - NebulaInterface adds hello demo.

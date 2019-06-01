@@ -211,7 +211,10 @@ else                # deploy remote
         make
         mkdir -p ../../NebulaDepend/include/hiredis
         cp -r adapters *.h ../../NebulaDepend/include/hiredis/
-        cp libhiredis.so ../../NebulaDepend/lib/
+        cp libhiredis.so ../../NebulaDepend/lib/libhiredis.so.0.13
+        cd ../../NebulaDepend/lib/
+        ln -s libhiredis.so.0.13 libhiredis.so
+        cd -
         if [ $? -ne 0 ]
         then
             echo "failed, teminated!" >&2
@@ -275,7 +278,10 @@ else                # deploy remote
         make libcryptopp.so
         mkdir -p ../../NebulaDepend/include/cryptopp
         cp *.h ../../NebulaDepend/include/cryptopp/
-        cp libcryptopp.so ../../NebulaDepend/lib/
+        cp libcryptopp.so ../../NebulaDepend/lib/libcryptopp.so.8
+        cd ../../NebulaDepend/lib
+        ln -s libcryptopp.so.8 libcryptopp.so
+        cd -
         if [ $? -ne 0 ]
         then
             echo "failed, teminated!" >&2

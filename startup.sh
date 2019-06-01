@@ -7,7 +7,7 @@ NEB_HOME=`pwd`
 
 NEB_BIN=${NEB_HOME}/bin
 NEB_CONF=${NEB_HOME}/conf
-NEB_LIB=${NEB_HOME}/lib
+NEB_LIB=${NEB_HOME}/lib:${NEB_HOME}/plugins
 NEB_LOG=${NEB_HOME}/log
 NEB_TEMP=${NEB_HOME}/temp
 export LD_LIBRARY_PATH=${NEB_LIB}

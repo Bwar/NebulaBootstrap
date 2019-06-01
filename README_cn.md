@@ -28,7 +28,7 @@ NebulaBootstrap是为开发人员提供快速构建分布式系统（包括配�
 
 <a name="Building"></a>
 ## 编译
-Nebula在centos6.5（需升级binutils到2.22之后版本）和centos7.4上用gcc6.4编译通过。
+Nebula需要gcc4.8以上的编译器。
 
 自动构建和部署步骤：
    1. wget https://github.com/Bwar/NebulaBootstrap/archive/master.zip
@@ -91,6 +91,12 @@ Nebula 完成的文档在 [Nebula documentation](https://github.com/Bwar/Nebula/
 
 <a name="ChangeLog"></a>
 ## 版本历史
+#### v0.8
+   - 兼容gcc4.8编译器（从这个版本起无须另行安装5以上gcc版本，可以无障碍无等待地在个人机器上部署和测试，也为应用于生产铺平道路。之前Bwar的埋点数据采集和实时分析的生产项目Nebio是在服务器上安装了gcc6才部署的。）
+   - 增加CPU亲和度设置以支持将Worker进程绑定CPU功能。(有人测试过繁忙的多核服务器，绑定CPU比不绑定CPU有20%左右的性能提升，现在Nebua可以让开发者自行选择是否绑定CPU)
+   - 增加动态库（业务插件）卸载功能。（支持不停服务升级的重要功能）
+#### v0.7
+   - 添加配置管理，NebulaBeacon为配置中心，使用说明见命令行管理工具[Nebcli](https://github.com/Bwar/Nebcli)的get和set命令。
 #### v0.6
    - NebulaBeacon增加节点状态信息查询，注册中心主从高可用选举
    - NebulaInterface提供HelloWorld示例。
