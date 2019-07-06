@@ -5,6 +5,7 @@ cd $DEPLOY_PATH
 DEPLOY_PATH=`pwd`
 BUILD_PATH="${DEPLOY_PATH}/build"
 NEBULA_BOOTSTRAP="NebulaBeacon NebulaInterface NebulaLogic"
+CPU_NUM=`lscpu | awk '/^CPU\(s\)/{print $2}'`
 chmod u+x *.sh
 
 mkdir -p ${DEPLOY_PATH}/lib >> /dev/null 2>&1
@@ -24,7 +25,9 @@ function Usage()
     echo -e "  -h, --help\t\t\tdisplay this help and exit."
     echo -e "  -v, --version\t\t\tdisplay nebula version and exit."
     echo -e "  -L, --local\t\t\tdeploy from local without download any files from internet."
+    echo -e "      --demo\t\tbuild NebulaDemo and NebulaDepend."
     echo -e "      --only-nebula\t\tonly build Nebula and NebulaBootstrap."
+    echo -e "      --build-path\t\tset the compilation path."
     echo -e "      --with-ssl\t\tinclude openssl for ssl and crypto. [default: without ssl]"
     echo -e "      --with-custom-ssl\t\tinclude openssl for ssl and crypto, the openssl is a custom installation version. [default: without ssl]"
     echo -e "      --with-ssl-include\tthe openssl include path."
@@ -42,7 +45,7 @@ SSL_INCLUDE_PATH=""
 SSL_LIB_PATH=""
 ARGV_DEFINE=`getopt \
     -o hvL \
-    --long help,version,local,only-nebula,with-ssl,with-custom-ssl,with-ssl-include:,with-ssl-lib: \
+    --long help,version,local,demo,only-nebula,with-ssl,with-custom-ssl,with-ssl-include:,with-ssl-lib: \
     -n 'deploy.bash' \
     -- "$@"`
 if [ $? != 0 ]
@@ -63,6 +66,11 @@ do
             echo "0.3"
             exit 0
             ;;
+        --demo)
+            echo "build NebulaDemo and NebulaDepend."
+            NEBULA_BOOTSTRAP="NebulaDemo"
+            shift
+            ;;
         --only-nebula)
             echo "Only build Nebula and NebulaBootstrap."
             DEPLOY_ONLY_NEBULA=true
@@ -80,6 +88,10 @@ do
         --with-custom-ssl)
             DEPLOY_WITH_CUSTOM_SSL=true
             shift
+            ;;
+        --build-path)
+            BUILD_PATH=$2
+            shift 2
             ;;
         --with-ssl-include)
             SSL_INCLUDE_PATH=$2
@@ -106,13 +118,6 @@ replace_config="yes"
 build_dir_num=`ls -l ${DEPLOY_PATH}/build | wc -l`
 if $DEPLOY_ONLY_NEBULA
 then
-    echo "please input the build path[\"enter\" when using default build path]:"
-    read build_path
-    if [ ! -z "$build_path" ]
-    then
-        BUILD_PATH="$build_path"
-    fi
-
     echo "do you want to replace all the config files with the original config files in build path? [yes | no]"
     read replace_config
 else                # deploy remote
@@ -143,7 +148,7 @@ else                # deploy remote
         chmod u+x autogen.sh
         ./autogen.sh
         ./configure --prefix=${BUILD_PATH}/NebulaDepend
-        make
+        make -j$CPU_NUM
         make install
         if [ $? -ne 0 ]
         then
@@ -177,7 +182,7 @@ else                # deploy remote
         chmod u+x autogen.sh
         ./autogen.sh
         ./configure --prefix=${BUILD_PATH}/NebulaDepend
-        make
+        make -j$CPU_NUM
         make install
         if [ $? -ne 0 ]
         then
@@ -208,7 +213,7 @@ else                # deploy remote
         unzip hiredis_v0.13.0.zip
         mv hiredis-0.13.0 hiredis
         cd hiredis
-        make
+        make -j$CPU_NUM
         mkdir -p ../../NebulaDepend/include/hiredis
         cp -r adapters *.h ../../NebulaDepend/include/hiredis/
         cp libhiredis.so ../../NebulaDepend/lib/libhiredis.so.0.13
@@ -245,7 +250,7 @@ else                # deploy remote
             unzip OpenSSL_1_1_0.zip
             cd openssl-OpenSSL_1_1_0
             ./config --prefix=${BUILD_PATH}/NebulaDepend
-            make
+            make -j$CPU_NUM
             make install
             if [ $? -ne 0 ]
             then
@@ -275,7 +280,7 @@ else                # deploy remote
 
         unzip CRYPTOPP_8_0_0.zip
         cd cryptopp-CRYPTOPP_8_0_0
-        make libcryptopp.so
+        make -j$CPU_NUM libcryptopp.so
         mkdir -p ../../NebulaDepend/include/cryptopp
         cp *.h ../../NebulaDepend/include/cryptopp/
         cp libcryptopp.so ../../NebulaDepend/lib/libcryptopp.so.8
@@ -381,7 +386,7 @@ else
     sed -i '/-L$(LIB3RD_PATH)\/lib -lssl/d' Makefile
     sed -i '/-L$(SYSTEM_LIB_PATH)\/lib -lssl/d' Makefile
 fi
-make clean; make
+make clean; make -j$CPU_NUM
 cp libnebula.so ${DEPLOY_PATH}/lib/
 if [ $? -ne 0 ]
 then
@@ -453,7 +458,7 @@ do
     else
         sed -i '/-L$(LIB3RD_PATH)\/lib -lssl/d' Makefile
     fi
-    make clean; make
+    make clean; make -j$CPU_NUM
     if [ $? -ne 0 ]
     then
         echo "failed, teminated!" >&2
@@ -471,7 +476,7 @@ done
 
 
 # download NebulaDynamic and build
-if ! $DEPLOY_LOCAL
+if ! $DEPLOY_LOCAL && [ "$NEBULA_BOOTSTRAP" != "NebulaDemo" ] 
 then
     if [ -f "NebulaDynamic.zip" ]
     then
@@ -498,7 +503,7 @@ then
     cd ${BUILD_PATH}/NebulaDynamic/Hello/src/
     sed -i 's/gcc-6/gcc/g' Makefile
     sed -i 's/g++-6/g++/g' Makefile
-    make clean; make
+    make clean; make -j$CPU_NUM
     cp *.so ${DEPLOY_PATH}/plugins/logic/ >> /dev/null
 fi
 cd ${BUILD_PATH}
