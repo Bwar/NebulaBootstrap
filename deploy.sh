@@ -46,7 +46,7 @@ SSL_INCLUDE_PATH=""
 SSL_LIB_PATH=""
 ARGV_DEFINE=`getopt \
     -o hvL \
-    --long help,version,local,demo,only-nebula,with-ssl,with-custom-ssl,with-ssl-include:,with-ssl-lib: \
+    --long help,version,local,demo,only-nebula,with-ssl,with-custom-ssl,build-path:,with-ssl-include:,with-ssl-lib: \
     -n 'deploy.bash' \
     -- "$@"`
 if [ $? != 0 ]
