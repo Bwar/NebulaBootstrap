@@ -6,6 +6,7 @@ DEPLOY_PATH=`pwd`
 BUILD_PATH="${DEPLOY_PATH}/build"
 NEBULA_BOOTSTRAP="NebulaBeacon NebulaInterface NebulaLogic"
 CPU_NUM=`lscpu | awk '/^CPU\(s\)/{print $2}'`
+CPU_NUM=1
 chmod u+x *.sh
 
 mkdir -p ${DEPLOY_PATH}/lib >> /dev/null 2>&1
